@@ -31,8 +31,8 @@ public class ColComprWithBuckInput {
 
     //        TODO : remove hardcode
     public ColComprWithBuckInput() {
-        this.section = new ShapedIBeamSection("GOST 8239-89", "20", 26.8);
-        this.steel = new Steel("245", 255.0);
+        this.section = new ShapedIBeamSection("20", 26.8);
+        this.steel = new Steel(255.0);
     }
 
     public ColComprWithBuckInput(Section section, Double length, Double estimatedLengthFactor,
@@ -40,13 +40,13 @@ public class ColComprWithBuckInput {
                                  Steel steel, Double moment, Double normalForce,
                                  Double traverseForce, Boolean ownWeightIncluded) {
 //        TODO : remove hardcode
-        this.section = new ShapedIBeamSection("GOST 8239-89", "20", 26.8);
+        this.section = new ShapedIBeamSection("20", 26.8);
         this.length = length;
         this.estimatedLengthFactor = estimatedLengthFactor;
         this.workingConditionsFactor = workingConditionsFactor;
         this.reliabilityFactorForResponsibility = reliabilityFactorForResponsibility;
         //        TODO : remove hardcode
-        this.steel = new Steel("245", 255.0);
+        this.steel = new Steel(255.0);
         this.moment = moment;
         this.normalForce = normalForce;
         this.traverseForce = traverseForce;

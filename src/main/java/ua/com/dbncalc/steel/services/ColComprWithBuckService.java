@@ -93,8 +93,9 @@ public class ColComprWithBuckService {
     // TODO : decide when to calculate the fields (if not in constructor then where?)
     public ColComprWithBuckService(ColComprWithBuckInput input) {
         this.input = input;
+//        this.input.getSection().setNumber(this.input.getSectionNumber());
 
-        designYieldStrange = input.getSteel().getDesignYieldStrangeShape();
+        designYieldStrange = this.input.getSteel().getDesignYieldStrangeShape();
         loadSectionData();
         calculateEffectiveLengthY();
         calculateSlendernessY();

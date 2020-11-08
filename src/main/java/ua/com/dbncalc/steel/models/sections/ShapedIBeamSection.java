@@ -28,7 +28,7 @@ public class ShapedIBeamSection extends IBeamSection {
     public ShapedIBeamSection() {
     }
 
-    public ShapedIBeamSection(String standard, String number, Double area) {
-        super(standard, number, area);
+    public ShapedIBeamSection(String number, Double area) {
+        super(number, area);
     }
 }

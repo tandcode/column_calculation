@@ -73,15 +73,14 @@
                     <!--                    №-->
                     <label for="sectionstandard" class="col-2 col-form-label">Standard</label>
                     <div class="col-5">
-                        <!--                                th:field="*{standard}"-->
-                        <select class="custom-select" id="sectionstandard">
+                        <select class="custom-select" id="sectionstandard" th:field="*{section.standard}">
                             <!--                            Виберіть сортамент-->
                             <option value="">Choose standard</option>
                             <option value="gost8239-89">GOST 8239-89</option>
                             <option value="gost19425-75*">GOST 19425-75*</option>
                             <option value="gost8240-89-parallel-flange">GOST 8240-89(with parallel flange)</option>
                             <option value="gost8240-89-slope-flange">GOST 8240-89(with slope flange)</option>
-                            <option value="gost302245-94-rectangle)">GOST 302245-94(rectangle profiles)</option>
+                            <option value="gost302245-94-rectangle">GOST 302245-94(rectangle profiles)</option>
                             <option value="gost302245-94-square">GOST 302245-94(square profiles)</option>
 
                         </select>
@@ -93,8 +92,8 @@
                     <label for="sectionid" class="col-2 col-form-label">#</label>
                     <div class="input-group col-5">
 <!--                        placeholder="№/розмір профілю"-->
-<!--                        th:field="*{section.number}"-->
-                        <input type="text" class="form-control" id="sectionid" placeholder="#/section size"/>
+                        <input type="text" class="form-control" id="sectionid" placeholder="#/section size"
+                               th:field="*{section.number}"/>
                     </div>
                 </div>
 
@@ -141,14 +140,13 @@
 <!--                    Сталь-->
                     <label for="steel" class="col-2 col-form-label">Steel</label>
                     <div class="col-5">
-<!--                        th:field="*{steel.grade}"-->
-                        <select class="custom-select" id="steel" >
+                        <select class="custom-select" id="steel" th:field="*{steel.grade}">
                             <option value="">Choose steel</option>
-                            <option>C235</option>
-                            <option>C245</option>
-                            <option>C255</option>
-                            <option>C275</option>
-                            <option>C345</option>
+                            <option value="gost-s235">C235</option>
+                            <option value="gost-s245">C245</option>
+                            <option value="gost-s255">C255</option>
+                            <option value="gost-s275">C275</option>
+                            <option value="gost-s345">C345</option>
                         </select>
                     </div>
                 </div>

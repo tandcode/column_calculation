@@ -41,8 +41,7 @@ public abstract class Section {
     public Section() {
     }
 
-    public Section(String standard, String number, Double area) {
-        this.standard = standard;
+    public Section(String number, Double area) {
         this.number = number;
         this.area = area;
     }
