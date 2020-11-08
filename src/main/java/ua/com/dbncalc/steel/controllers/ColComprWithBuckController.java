@@ -39,7 +39,6 @@ public class ColComprWithBuckController {
     {
         inputDao.create(colComprWithBuckInput);
         ColComprWithBuckService service = new ColComprWithBuckService(colComprWithBuckInput);
-        service.calculateEffectiveLengthY();
         model.addAttribute("colComprWithBuckService", service);
         return "result";
     }

@@ -7,8 +7,25 @@
 <body>
 <main role="main">
     <div class="container" th>
-        <h3> Effective legth is:</h3>
+        <h3> Effective length is (m): </h3>
         <p th:text="${colComprWithBuckService.getEffectiveLengthY()}"></p>
+
+        <h3> Slenderness in Y axes is: </h3>
+        <p th:text="${colComprWithBuckService.getSlendernessY()}"></p>
+
+        <h3> Non dimensional slenderness in Y axes is: </h3>
+        <p th:text="${colComprWithBuckService.getNonDimSlendernessY()}"></p>
+
+        <h3> Delta modulus in Y axes is: </h3>
+        <p th:text="${colComprWithBuckService.getDeltaModulusY()}"></p>
+
+        <h3> Buckling modulus in Y axes is: </h3>
+        <p th:text="${colComprWithBuckService.getBucklingModulusY()}"></p>
+
+        <h3> Result is: </h3>
+        <p th:text="${colComprWithBuckService.getColComprWithBuckModulusY()}"></p>
+
+
     </div>
 </main>
 </body>

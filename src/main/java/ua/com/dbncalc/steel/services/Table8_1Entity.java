@@ -2,13 +2,12 @@ package ua.com.dbncalc.steel.services;
 
 public class Table8_1Entity {
     private Double alpha;
+    private Double beta;
 
     public Table8_1Entity(Double alpha, Double beta) {
         this.alpha = alpha;
         this.beta = beta;
     }
-
-    private Double beta;
 
     public Double getAlpha() {
         return alpha;

@@ -114,8 +114,9 @@ public class Steel {
     public Steel() {
     }
 
-    public Steel(String grade) {
+    public Steel(String grade, Double designYieldStrangeShape) {
         this.grade = grade;
+        this.designYieldStrangeShape = designYieldStrangeShape;
     }
 
     public void setDesignYieldStrangeShape(Double designYieldStrangeShape) {

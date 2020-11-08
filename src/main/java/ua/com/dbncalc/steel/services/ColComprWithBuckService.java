@@ -1,12 +1,7 @@
 package ua.com.dbncalc.steel.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import ua.com.dbncalc.steel.models.ColComprWithBuckInput;
-import ua.com.dbncalc.steel.models.sections.Section;
-import ua.com.dbncalc.steel.models.sections.WeldedIBeamSection;
 
-import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.sqrt;
@@ -26,8 +21,10 @@ public class ColComprWithBuckService {
     //non dimensional slenderness Y axis (overline lambdaY)
     private Double nonDimSlendernessY;
 
+    //TODO: implement choosing strange depending on shaped profile or from plates
     //design yield strange (Ry) in N/mm^2
     private Double designYieldStrange;
+
         // TODO : realize conditional initialization
 //    {
 //        if (input.getSection() instanceof WeldedIBeamSection)
@@ -35,10 +32,10 @@ public class ColComprWithBuckService {
 //
 //    }
 
-    //steel modulus of elasticity (E) in N/mm^2
+    //steel modulus of elasticity (E) in MPa - megapascal
     private static Double modulusOfElasticity = 2.06e5;
 
-    public enum TypeOfSlenderCurve{
+    private enum TypeOfSlenderCurve{
         A,
         B,
         C
@@ -51,7 +48,39 @@ public class ColComprWithBuckService {
             TypeOfSlenderCurve.B, new Table8_1Entity(0.04, 0.09),
             TypeOfSlenderCurve.C, new Table8_1Entity(0.04, 0.14)
             );
+    //TODO : implement getting slender curve from section data
 
+    private TypeOfSlenderCurve slenderCurve;
+    {
+        slenderCurve = TypeOfSlenderCurve.B;
+    }
+
+    private Double deltaModulusY;
+
+    //
+    private Double bucklingModulusY;
+
+    private Double colComprWithBuckModulusY;
+
+    public Double getColComprWithBuckModulusY() {
+        return colComprWithBuckModulusY;
+    }
+
+    public Double getBucklingModulusY() {
+        return bucklingModulusY;
+    }
+
+    public void setBucklingModulusY(Double bucklingModulusY) {
+        this.bucklingModulusY = bucklingModulusY;
+    }
+
+    public Double getDeltaModulusY() {
+        return deltaModulusY;
+    }
+
+    public void setDeltaModulusY(Double deltaModulusY) {
+        this.deltaModulusY = deltaModulusY;
+    }
 
     public Double getNonDimSlendernessY() {
         return nonDimSlendernessY;
@@ -61,9 +90,19 @@ public class ColComprWithBuckService {
         this.nonDimSlendernessY = nonDimSlendernessY;
     }
 
-
+    // TODO : decide when to calculate the fields (if not in constructor then where?)
     public ColComprWithBuckService(ColComprWithBuckInput input) {
         this.input = input;
+
+        designYieldStrange = input.getSteel().getDesignYieldStrangeShape();
+        loadSectionData();
+        calculateEffectiveLengthY();
+        calculateSlendernessY();
+        calculateNonDimSlendernessY();
+        calculateDeltaModulusY();
+        calculateBucklingModulusY();
+        calculateColComprWithBuckModulusY();
+
     }
 
     public void loadSectionData(){
@@ -77,24 +116,69 @@ public class ColComprWithBuckService {
 
     //TODO : maybe calculate fields during initialisation
 
-    // lef=mu*l
+    // lef(m)=mu*l(m)
     public void calculateEffectiveLengthY() {
-        setEffectiveLengthY(input.getEstimatedLengthFactor() * input.getLength());
+        effectiveLengthY = input.getEstimatedLengthFactor() * input.getLength();
     }
 
-    // lambda=lef/i
+    // lambda=lef[m]/i[mm]
     public void calculateSlendernessY() {
-        setEffectiveLengthY(getEffectiveLengthY() / input.getSection().getRadiusOfGyrationYAxis());
+        slendernessY = effectiveLengthY / input.getSection().getRadiusOfGyrationYAxis() * 1000;
     }
 
-    // overline lambda=lambda*sqrt(Ry/E)
+    // overlineLambda=lambda*sqrt(Ry[MPa]/E[MPa])
     public void calculateNonDimSlendernessY() {
-        setNonDimSlendernessY(slendernessY * sqrt(designYieldStrange / modulusOfElasticity));
+        nonDimSlendernessY = slendernessY * sqrt(designYieldStrange / modulusOfElasticity);
     }
 
-    public Double getResult(){
-        calculateEffectiveLengthY();
-        return getEffectiveLengthY();
+    // delta=9.87*(1-alpha+beta * overLambda) + overLambda^2
+    public void calculateDeltaModulusY(){
+
+        Table8_1Entity table8_1Entity = AlphaAndBetaCoefficients.get(slenderCurve);
+        Double alpha = table8_1Entity.getAlpha();
+        Double beta = table8_1Entity.getBeta();
+
+        setDeltaModulusY(9.87 * (1 - alpha + beta * nonDimSlendernessY) + nonDimSlendernessY * nonDimSlendernessY);
+    }
+
+    // phi=0.5/overLambda^2*(delta-sqrt(delta^2-39.48*overLambda^2))
+    public void calculateBucklingModulusY(){
+        if(nonDimSlendernessY < 0.4) {
+            bucklingModulusY = 1.0;
+        }
+        else {
+            Double bucklingModulusYFirst;
+            bucklingModulusYFirst = 0.5 / (nonDimSlendernessY * nonDimSlendernessY) * (deltaModulusY
+                    - sqrt(deltaModulusY * deltaModulusY - 39.48 * nonDimSlendernessY * nonDimSlendernessY));
+
+            Double minNonDimSlendernessY = 0.0;
+            switch (slenderCurve){
+                case A: minNonDimSlendernessY = 3.8;
+                    break;
+                case B: minNonDimSlendernessY = 4.4;
+                    break;
+                case C: minNonDimSlendernessY = 5.8;
+            }
+            if(nonDimSlendernessY > minNonDimSlendernessY){
+                // phi should be less then7.6/overlineLambda^2
+                Double checkValue = 7.6 / nonDimSlendernessY * nonDimSlendernessY;
+                bucklingModulusY = bucklingModulusYFirst > checkValue ? checkValue : bucklingModulusYFirst;
+            }
+            else {
+                bucklingModulusY = bucklingModulusYFirst;
+            }
+        }
+    }
+
+    // TODO : implement including own weight
+
+    // N[t]*gammaN/(phi*A[cm^2]*Ry[MPa]*yc) <= 1
+    // TODO : maybe implement inversion MPa > T/sm^2
+    // TODO : implement second axis Z
+    public void calculateColComprWithBuckModulusY(){
+        colComprWithBuckModulusY = input.getNormalForce() * 9.81 * 10 * input.getReliabilityFactorForResponsibility() /
+                (bucklingModulusY * input.getSection().getArea() * designYieldStrange *
+                input.getWorkingConditionsFactor());
     }
 
     public ColComprWithBuckInput getInput() {

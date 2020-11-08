@@ -37,7 +37,7 @@ public abstract class IBeamSection extends Section{
     public IBeamSection() {
     }
 
-    public IBeamSection(String standard, String number) {
-        super(standard, number);
+    public IBeamSection(String standard, String number, Double area) {
+        super(standard, number, area);
     }
 }
