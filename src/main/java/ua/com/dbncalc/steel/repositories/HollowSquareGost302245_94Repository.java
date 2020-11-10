@@ -5,5 +5,5 @@ import ua.com.dbncalc.steel.models.sections.HollowRectangleSection;
 import ua.com.dbncalc.steel.models.sections.HollowSquareSection;
 
 public interface HollowSquareGost302245_94Repository
-        extends CrudRepository<HollowSquareSection, Integer> {
+       {
 }

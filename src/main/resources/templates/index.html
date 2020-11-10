@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" media="all"
-          href="../../resources/css/bootstrap.css" th:href="@{/css/bootstrap.css}">
+          href="../css/bootstrap.css" th:href="@{/css/bootstrap.css}">
     <link rel="stylesheet" type="text/css" media="all"
-          href="../../resources/css/style.css" th:href="@{/css/style.css}">
+          href="../css/style.css" th:href="@{/css/style.css}">
 <!--    Розрахунок по ДБН В.2.6-198:2014, п.8.1.3-->
     <title>Calculation with DBN V.2.6-198:2014, par.8.1.3</title>
 </head>
@@ -73,7 +73,8 @@
                     <!--                    №-->
                     <label for="sectionstandard" class="col-2 col-form-label">Standard</label>
                     <div class="col-5">
-                        <select class="custom-select" id="sectionstandard" th:field="*{section.standard}">
+                        th:field="*{section.standard}"
+                        <select class="custom-select" id="sectionstandard" >
                             <!--                            Виберіть сортамент-->
                             <option value="">Choose standard</option>
                             <option value="gost8239-89">GOST 8239-89</option>
