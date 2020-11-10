@@ -3,26 +3,22 @@ package ua.com.dbncalc.steel.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 import ua.com.dbncalc.steel.dao.ColComprWithBuckInputDao;
 import ua.com.dbncalc.steel.models.ColComprWithBuckInput;
+import ua.com.dbncalc.steel.models.sections.I_ProfileGost8239_89;
+import ua.com.dbncalc.steel.repositories.I_ProfileGost8239_89Repository;
 import ua.com.dbncalc.steel.services.ColComprWithBuckService;
 
 @Controller
 public class ColComprWithBuckController {
 
-    private final ColComprWithBuckInputDao inputDao;
 
     @Autowired
-    public ColComprWithBuckController(ColComprWithBuckInputDao inputDao) {
-        this.inputDao = inputDao;
-    }
+    private ColComprWithBuckInputDao inputDao;
+
+    @Autowired
+    private I_ProfileGost8239_89Repository i_profileGost8239_89Repository;
 
     @GetMapping("/col")
     public String columnCompressionWithBucklingForm(@ModelAttribute("colComprWithBuckInput")
@@ -43,5 +39,8 @@ public class ColComprWithBuckController {
         return "result";
     }
 
-
+    @GetMapping("/all")
+    public @ResponseBody Iterable<I_ProfileGost8239_89> getAll() {
+        return i_profileGost8239_89Repository.findAll();
+    }
 }

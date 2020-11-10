@@ -1,7 +1,12 @@
 package ua.com.dbncalc.steel.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ua.com.dbncalc.steel.models.ColComprWithBuckInput;
+import ua.com.dbncalc.steel.models.sections.I_ProfileGost8239_89;
+import ua.com.dbncalc.steel.repositories.I_ProfileGost8239_89Repository;
 
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.sqrt;
@@ -10,6 +15,14 @@ public class ColComprWithBuckService {
 
     private final ColComprWithBuckInput input;
 
+//    public Section getTest() {
+//        return test;
+//    }
+//
+//    private Section test;
+
+    @Autowired
+    private I_ProfileGost8239_89Repository iBeamGost8279_89Repository;
     // TODO: realize calculation for Z axis
 
     //effective length Y axis (lefY) in m
@@ -111,6 +124,13 @@ public class ColComprWithBuckService {
         // TODO : access DB data
 
         //test data
+
+        List<I_ProfileGost8239_89> result = iBeamGost8279_89Repository
+                .findI_ProfileGost8239_89ByProfileNumber(input.getSection().getProfileNumber());
+//        test = result.get(0);
+
+        input.setSection(result.get(0));
+//        result.size() > 0 ? result.get(0) : null
         input.getSection().setRadiusOfGyrationYAxis(82.8);
 
     }

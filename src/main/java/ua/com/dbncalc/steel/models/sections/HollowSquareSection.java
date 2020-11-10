@@ -1,5 +1,8 @@
 package ua.com.dbncalc.steel.models.sections;
 
+import javax.persistence.Entity;
+
+@Entity
 public class HollowSquareSection extends HollowRectangleSection {
 
     //web thickness (s) in mm

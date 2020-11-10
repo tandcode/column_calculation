@@ -1,6 +1,8 @@
 package ua.com.dbncalc.steel.models.sections;
 
-public class ShapedIBeamSection extends IBeamSection {
+import javax.persistence.Entity;
+
+public abstract class ShapedIBeamSection extends IBeamSection {
 
     //inside radius (r1) in mm
     private Double insideRadius;

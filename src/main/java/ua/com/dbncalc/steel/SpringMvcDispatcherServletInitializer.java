@@ -2,7 +2,6 @@ package ua.com.dbncalc.steel;
 
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
-import ua.com.dbncalc.steel.config.SpringConfig;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
