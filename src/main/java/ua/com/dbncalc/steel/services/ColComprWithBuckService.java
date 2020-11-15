@@ -1,7 +1,6 @@
 package ua.com.dbncalc.steel.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import ua.com.dbncalc.steel.models.ColComprWithBuckInput;
 import ua.com.dbncalc.steel.models.sections.I_ProfileGost8239_89;
 import ua.com.dbncalc.steel.repositories.I_ProfileGost8239_89Repository;
@@ -21,8 +20,7 @@ public class ColComprWithBuckService {
 //
 //    private Section test;
 
-    @Autowired
-    private I_ProfileGost8239_89Repository iBeamGost8279_89Repository;
+    private I_ProfileGost8239_89Repository i_profileGost8239_89Repository;
     // TODO: realize calculation for Z axis
 
     //effective length Y axis (lefY) in m
@@ -104,10 +102,10 @@ public class ColComprWithBuckService {
     }
 
     // TODO : decide when to calculate the fields (if not in constructor then where?)
-    public ColComprWithBuckService(ColComprWithBuckInput input) {
+    public ColComprWithBuckService(ColComprWithBuckInput input, I_ProfileGost8239_89Repository i_profileGost8239_89Repository) {
         this.input = input;
 //        this.input.getSection().setNumber(this.input.getSectionNumber());
-
+        this.i_profileGost8239_89Repository = i_profileGost8239_89Repository;
         designYieldStrange = this.input.getSteel().getDesignYieldStrangeShape();
         loadSectionData();
         calculateEffectiveLengthY();
@@ -125,7 +123,7 @@ public class ColComprWithBuckService {
 
         //test data
 
-        List<I_ProfileGost8239_89> result = iBeamGost8279_89Repository
+        List<I_ProfileGost8239_89> result = i_profileGost8239_89Repository
                 .findI_ProfileGost8239_89ByProfileNumber(input.getSection().getProfileNumber());
 //        test = result.get(0);
 
