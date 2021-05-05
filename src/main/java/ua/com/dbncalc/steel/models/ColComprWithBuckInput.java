@@ -1,6 +1,6 @@
 package ua.com.dbncalc.steel.models;
 
-import ua.com.dbncalc.steel.models.sections.I_ProfileGost8239_89;
+import ua.com.dbncalc.steel.models.sections.IProfileGost8239_89;
 import ua.com.dbncalc.steel.models.sections.Section;
 import ua.com.dbncalc.steel.models.steels.Steel;
 
@@ -8,7 +8,7 @@ public class ColComprWithBuckInput {
 
     private int id;
 
-    private I_ProfileGost8239_89 section;
+    private IProfileGost8239_89 section;
 
     //element length in m
     private Double length;
@@ -31,7 +31,6 @@ public class ColComprWithBuckInput {
 
     //        TODO : remove hardcode
     public ColComprWithBuckInput() {
-        this.section = new I_ProfileGost8239_89("20", 26.8);
         this.steel = new Steel(255.0);
     }
 
@@ -39,8 +38,6 @@ public class ColComprWithBuckInput {
                                  Double workingConditionsFactor, Double reliabilityFactorForResponsibility,
                                  Steel steel, Double moment, Double normalForce,
                                  Double traverseForce, Boolean ownWeightIncluded) {
-//        TODO : remove hardcode
-        this.section = new I_ProfileGost8239_89("20", 26.8);
         this.length = length;
         this.estimatedLengthFactor = estimatedLengthFactor;
         this.workingConditionsFactor = workingConditionsFactor;
@@ -57,7 +54,7 @@ public class ColComprWithBuckInput {
         return id;
     }
 
-    public I_ProfileGost8239_89 getSection() {
+    public IProfileGost8239_89 getSection() {
         return section;
     }
 
@@ -69,7 +66,7 @@ public class ColComprWithBuckInput {
         this.id = id;
     }
 
-    public void setSection(I_ProfileGost8239_89 section) {
+    public void setSection(IProfileGost8239_89 section) {
         this.section = section;
     }
 

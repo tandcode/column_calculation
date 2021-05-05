@@ -8,12 +8,10 @@ import javax.persistence.MappedSuperclass;
 @Data
 @NoArgsConstructor
 @MappedSuperclass
-public abstract class HollowRectangleSection extends Section {
-
-    //web thickness (s) in mm
-    private Double webThick;
-
+public abstract class IBeamRoundedFlangeSection extends IBeamSection{
     //inside radius (r1) in mm
     private Double insideRadius;
 
+    //outside radius (r2) in mm
+    private Double outsideRadius;
 }

@@ -1,21 +1,23 @@
 package ua.com.dbncalc.steel.models.sections;
 
-import javax.persistence.Entity;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
-//@Entity
+@Data
+@NoArgsConstructor
+@MappedSuperclass
 public abstract class Section {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
-    //profile standard e.g. gost 8239-89
-    private String standard;
-
     //profile number(identifier)
-    private String number;
+    private String profileNumber;
 
     //section height (h) in mm
     private Double height;
@@ -47,107 +49,4 @@ public abstract class Section {
     //section radius of gyration Z axis (iz) in mm
     private Double radiusOfGyrationZAxis;
 
-    public Section() {
-    }
-
-    public Section(String number, Double area) {
-        this.number = number;
-        this.area = area;
-    }
-
-    public String getStandard() {
-        return standard;
-    }
-
-    public void setStandard(String standard) {
-        this.standard = standard;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public Double getHeight() {
-        return height;
-    }
-
-    public void setHeight(Double height) {
-        this.height = height;
-    }
-
-    public Double getBreadth() {
-        return breadth;
-    }
-
-    public void setBreadth(Double breadth) {
-        this.breadth = breadth;
-    }
-
-    public Double getArea() {
-        return area;
-    }
-
-    public void setArea(Double area) {
-        this.area = area;
-    }
-
-    public Double getWeightPerLength() {
-        return weightPerLength;
-    }
-
-    public void setWeightPerLength(Double weightPerLength) {
-        this.weightPerLength = weightPerLength;
-    }
-
-    public Double getSecondMomentAboutYAxis() {
-        return secondMomentAboutYAxis;
-    }
-
-    public void setSecondMomentAboutYAxis(Double secondMomentAboutYAxis) {
-        this.secondMomentAboutYAxis = secondMomentAboutYAxis;
-    }
-
-    public Double getSecondMomentAboutZAxis() {
-        return secondMomentAboutZAxis;
-    }
-
-    public void setSecondMomentAboutZAxis(Double secondMomentAboutZAxis) {
-        this.secondMomentAboutZAxis = secondMomentAboutZAxis;
-    }
-
-    public Double getSectionModulusAboutYAxis() {
-        return sectionModulusAboutYAxis;
-    }
-
-    public void setSectionModulusAboutYAxis(Double sectionModulusAboutYAxis) {
-        this.sectionModulusAboutYAxis = sectionModulusAboutYAxis;
-    }
-
-    public Double getSectionModulusAboutZAxis() {
-        return sectionModulusAboutZAxis;
-    }
-
-    public void setSectionModulusAboutZAxis(Double sectionModulusAboutZAxis) {
-        this.sectionModulusAboutZAxis = sectionModulusAboutZAxis;
-    }
-
-    public Double getRadiusOfGyrationYAxis() {
-        return radiusOfGyrationYAxis;
-    }
-
-    public void setRadiusOfGyrationYAxis(Double radiusOfGyrationYAxis) {
-        this.radiusOfGyrationYAxis = radiusOfGyrationYAxis;
-    }
-
-    public Double getRadiusOfGyrationZAxis() {
-        return radiusOfGyrationZAxis;
-    }
-
-    public void setRadiusOfGyrationZAxis(Double radiusOfGyrationZAxis) {
-        this.radiusOfGyrationZAxis = radiusOfGyrationZAxis;
-    }
 }

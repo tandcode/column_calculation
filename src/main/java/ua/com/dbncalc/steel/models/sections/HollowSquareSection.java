@@ -1,31 +1,20 @@
 package ua.com.dbncalc.steel.models.sections;
 
-import javax.persistence.Entity;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-//@Entity
-public class HollowSquareSection extends HollowRectangleSection {
+import javax.persistence.MappedSuperclass;
+
+@Data
+@NoArgsConstructor
+@MappedSuperclass
+public abstract class HollowSquareSection extends HollowRectangleSection {
 
     //web thickness (s) in mm
     private Double webThick;
 
     //inside radius (r1) in mm
     private Double insideRadius;
-
-    public Double getWebThick() {
-        return webThick;
-    }
-
-    public void setWebThick(Double webThick) {
-        this.webThick = webThick;
-    }
-
-    public Double getInsideRadius() {
-        return insideRadius;
-    }
-
-    public void setInsideRadius(Double insideRadius) {
-        this.insideRadius = insideRadius;
-    }
 
     {
         //square profile has equal parameters that depends on axes
@@ -34,6 +23,5 @@ public class HollowSquareSection extends HollowRectangleSection {
         setSecondMomentAboutZAxis(getSecondMomentAboutYAxis());
         setSectionModulusAboutZAxis(getSectionModulusAboutYAxis());
     }
-
 
 }

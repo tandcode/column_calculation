@@ -30,7 +30,4 @@ public abstract class ShapedIBeamSection extends IBeamSection {
     public ShapedIBeamSection() {
     }
 
-    public ShapedIBeamSection(String number, Double area) {
-        super(number, area);
-    }
 }

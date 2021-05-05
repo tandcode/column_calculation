@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+
+    <link th:href="@{/styles/bootstrap.css}" rel="stylesheet">
+</head>
+<body>
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm"
+    th:fragment="header">
+
+        <span class="p-2 border">
+                <a class="p-2 text-dark" th:href="@{'?lang=en'}" th:text="#{lang.en}"></a>
+                <a class="p-2 text-dark" th:href="@{'?lang=ua'}" th:text="#{lang.ua}"></a>
+        </span>
+<!--        <div sec:authorize="isAuthenticated()">-->
+<!--            <a class="btn btn-outline-primary" th:href="@{/logout}" th:text="#{login.signout}"></a>-->
+<!--        </div>-->
+<!--        <div sec:authorize="!isFullyAuthenticated()">-->
+<!--            <a class="btn btn-outline-primary" th:href="@{/login}" th:text="#{login.signin}"></a>-->
+<!--        </div>-->
+    </div>
+</body>
+</html>
