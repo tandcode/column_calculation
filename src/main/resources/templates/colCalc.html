@@ -7,11 +7,16 @@
     <title th:text="#{axialCompr.title}">Title</title>
 </head>
 <body>
+<!--  onload="checkResult();"-->
+<!--TODO:disable page overdoading while changing language-->
     <div th:replace="fragments/header :: header"></div>
     <main role="main">
         <div class="container">
             <h3 th:text="#{axialCompr.pageTitle}">Page title</h3>
         </div>
+        <div class="row">
+
+        <div class="col mx-3">
         <div class="container">
             <h4 class="py-3" th:text="#{axialCompr.inputData}">Input data</h4>
             <form th:method="POST" th:action="@{/col}" th:object="${colComprWithBuckDto}">
@@ -174,37 +179,14 @@
                 </div>
             </form>
         </div>
-<!--        <div class="container" id="resultData" style="display: none">-->
-<!--            <h3> Standard is: </h3>-->
-<!--            &lt;!&ndash;        <p th:text="${result.getSection().getStandard()}"></p>&ndash;&gt;-->
-
-<!--            <h3> Profile number is: </h3>-->
-<!--            <p th:text="${result.getSection().getProfileNumber()}"></p>-->
-
-<!--            &lt;!&ndash;        <h3> Test section area is: </h3>&ndash;&gt;-->
-<!--            &lt;!&ndash;        <p th:text="${colComprWithBuckService.getTest().getArea()}"></p>&ndash;&gt;-->
-
-<!--            <h3> Steel is: </h3>-->
-<!--            <p th:text="${result.getSteel().getSteelName()}"></p>-->
-
-<!--            <h3> Effective length is (m): </h3>-->
-<!--            <p th:text="${result.getEffectiveLengthY()}"></p>-->
-
-<!--            <h3> Slenderness in Y axes is: </h3>-->
-<!--            <p th:text="${result.getSlendernessY()}"></p>-->
-
-<!--            <h3> Non dimensional slenderness in Y axes is: </h3>-->
-<!--            <p th:text="${result.getNonDimSlendernessY()}"></p>-->
-
-<!--            <h3> Delta modulus in Y axes is: </h3>-->
-<!--            <p th:text="${result.getDeltaModulusY()}"></p>-->
-
-<!--            <h3> Buckling modulus in Y axes is: </h3>-->
-<!--            <p th:text="${result.getBucklingModulusY()}"></p>-->
-
-<!--            <h3> Result is: </h3>-->
-<!--            <p th:text="${result.getColComprWithBuckModulusY()}"></p>-->
-<!--        </div>-->
+        </div>
+        <div class="col mx-3">
+            <th:block th:if="${result != null}">
+                <div th:insert="result :: resultBlock">
+                </div>
+            </th:block>
+        </div>
+        </div>
     </main>
     <!-- Optional JavaScript -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -238,11 +220,6 @@
                     document.getElementById("gost302245-94s").style.display = "block";
             }
             document.getElementById("sectionstandard").selectedIndex = 0;
-        }
-    </script>
-    <script type="text/javascript">
-        function checkResult() {
-            [[${result}]]
         }
     </script>
 </body>

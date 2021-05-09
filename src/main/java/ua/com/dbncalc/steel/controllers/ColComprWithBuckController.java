@@ -22,9 +22,11 @@ public class ColComprWithBuckController {
     @Autowired
     private SteelRepository steelResistRepository;
 
+
     @GetMapping("/col")
     public String columnCompressionWithBucklingForm(Model model) {
         model.addAttribute("colComprWithBuckDto", new ColComprWithBuckDto());
+        model.addAttribute("result", null);
         return "colCalc";
     }
 
@@ -36,7 +38,7 @@ public class ColComprWithBuckController {
     {
         inputDao.create(colComprWithBuckDto);
         model.addAttribute("result", service.calculate(colComprWithBuckDto));
-        return "result";
+        return "colCalc";
     }
 
     @GetMapping("/all")

@@ -5,38 +5,16 @@
     <title>Calculation result</title>
 </head>
 <body>
-<main role="main">
-    <div class="container" th>
-        <h3> Standard is: </h3>
-<!--        <p th:text="${result.getSection().getStandard()}"></p>-->
-
-        <h3> Profile number is: </h3>
-        <p th:text="${result.getSection().getProfileNumber()}"></p>
-
-<!--        <h3> Test section area is: </h3>-->
-<!--        <p th:text="${colComprWithBuckService.getTest().getArea()}"></p>-->
-
-        <h3> Steel is: </h3>
-        <p th:text="${result.getSteel().getSteelName()}"></p>
-
-        <h3> Effective length is (m): </h3>
-        <p th:text="${result.getEffectiveLengthY()}"></p>
-
-        <h3> Slenderness in Y axes is: </h3>
-        <p th:text="${result.getSlendernessY()}"></p>
-
-        <h3> Non dimensional slenderness in Y axes is: </h3>
-        <p th:text="${result.getNonDimSlendernessY()}"></p>
-
-        <h3> Delta modulus in Y axes is: </h3>
-        <p th:text="${result.getDeltaModulusY()}"></p>
-
-        <h3> Buckling modulus in Y axes is: </h3>
-        <p th:text="${result.getBucklingModulusY()}"></p>
-
-        <h3> Result is: </h3>
-        <p th:text="${result.getColComprWithBuckModulusY()}"></p>
+    <div th:fragment="resultBlock">
+        <h4 class="py-3" th:text="#{axialCompr.result}">Input data</h4>
+        <p th:text="#{axialCompr.profileNumber}+': '+${result.getSection().getProfileNumber()}"></p>
+        <p th:text="#{axialCompr.steel}+': '+${result.getSteel().getSteelName()}"></p>
+        <span>l<sub>ef</sub>: </span><p th:text="${result.getEffectiveLengthY()}"></p>
+        <span>&#955;: </span><p th:text="${#numbers.formatDecimal(result.getSlendernessY(),1,3)}"></p>
+        <span style="text-decoration:overline">&#955;: </span><p th:text="${#numbers.formatDecimal(result.getNonDimSlendernessY(),1,3)}"></p>
+        <span>&#948;: </span><p th:text="${#numbers.formatDecimal(result.getDeltaModulusY(),1,3)}"></p>
+        <span>&#966;: </span><p th:text="${#numbers.formatDecimal(result.getBucklingModulusY(),1,3)}"></p>
+        <p th:text="#{axialCompr.designValue}+': '+${#numbers.formatDecimal(result.getColComprWithBuckModulusY(),1,3)}"></p>
     </div>
-</main>
 </body>
 </html>
