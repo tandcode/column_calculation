@@ -8,6 +8,7 @@ import ua.com.dbncalc.steel.dto.ColComprWithBuckDto;
 import ua.com.dbncalc.steel.models.sections.Section;
 import ua.com.dbncalc.steel.models.sections.ShapedSection;
 import ua.com.dbncalc.steel.models.sections.WeldedIBeamSection;
+import ua.com.dbncalc.steel.models.sections.builder.WeldedIBeamSectionBuilder;
 import ua.com.dbncalc.steel.models.steels.Steel;
 import ua.com.dbncalc.steel.repositories.*;
 import ua.com.dbncalc.steel.services.Table8_1Entity;
@@ -102,7 +103,7 @@ public class ColComprWithBuckCalcUnit {
     public void loadSectionData(){
         // TODO: 12.05.2021 replase string with constant or move to config file
 
-        section = input.getSectionType().equals("weldedBeam") ?
+        section = input.getSectionType().equals("welded-i-beam") ?
                 initWeldedBeam() :
                 sectionRepository
                 .findByStandardAndProfileNumber(input.getSectionStandard(), input.getSectionNumber())
@@ -116,12 +117,51 @@ public class ColComprWithBuckCalcUnit {
         Double webDepth = input.getWebDepth();
         Double webThickness = input.getWebThickness();
 
-        Double area = 2 * flangeWidth * flangeThickness + webDepth * webThickness;
+        Double area = (2 * flangeWidth * flangeThickness + webDepth * webThickness) / 100;
         Double width = flangeWidth;
         Double depth = webDepth + 2 * flangeThickness;
+        // TODO: 13.05.2021 consider to move constants in separate file
+        Double weightPerLength = 7850 * area / 100;
 
+        //section second moment about Y axis (Iy) in sm^4
+        Double secondMomentAboutYAxis = (2 * (flangeWidth * Math.pow(flangeThickness, 3) / 12
+                + Math.pow((webDepth + flangeThickness) / 2, 2) * flangeThickness * flangeWidth)
+                + webThickness * Math.pow(webDepth, 3) / 12) / 10000;
 
-        Section weldedBeam = new WeldedIBeamSection();
+        //section second moment about Z axis (Iz) in sm^4
+        Double secondMomentAboutZAxis = (2 * (flangeThickness * Math.pow(flangeWidth, 3) / 12)
+                + webDepth * Math.pow(webThickness, 3) / 12) / 10000;
+
+        //section modulus about Y axis (Wy) in sm^3
+        Double sectionModulusAboutYAxis = secondMomentAboutYAxis / (depth / 2) * 10;
+
+        //section modulus about Z axis (Wz) in sm^3
+        Double sectionModulusAboutZAxis = secondMomentAboutZAxis / (width / 2) * 10;
+
+        //section radius of gyration Y axis (iy) in mm
+        Double radiusOfGyrationYAxis = Math.sqrt(secondMomentAboutYAxis / area) * 10;
+
+        //section radius of gyration Z axis (iz) in mm
+        Double radiusOfGyrationZAxis = Math.sqrt(secondMomentAboutZAxis / area) * 10;
+
+        Section weldedBeam = WeldedIBeamSectionBuilder.aWeldedIBeamSection()
+                .withArea(area)
+                .withWidth(width)
+                .withDepth(depth)
+                .withFlangeWidth(flangeWidth)
+                .withFlangeThickness(flangeThickness)
+                .withWebDepth(webDepth)
+                .withWebThickness(webThickness)
+                .withWeightPerLength(weightPerLength)
+                // TODO: 13.05.2021 remove hardcode
+                .withLegOfWeld(5.0)
+                .withSecondMomentAboutYAxis(secondMomentAboutYAxis)
+                .withSecondMomentAboutZAxis(secondMomentAboutZAxis)
+                .withSectionModulusAboutYAxis(sectionModulusAboutYAxis)
+                .withSectionModulusAboutZAxis(sectionModulusAboutZAxis)
+                .withRadiusOfGyrationYAxis(radiusOfGyrationYAxis)
+                .withRadiusOfGyrationZAxis(radiusOfGyrationZAxis)
+                .build();
         return weldedBeam;
     }
 

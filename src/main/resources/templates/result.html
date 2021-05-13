@@ -7,7 +7,7 @@
 <body>
     <div th:fragment="resultBlock">
         <h4 class="py-3" th:text="#{axialCompr.result}">Input data</h4>
-        <p th:text="#{axialCompr.profileNumber}+': '+${result.getSection().getProfileNumber()}"></p>
+<!--        <p th:text="#{axialCompr.profileNumber}+': '+${result.getSection().getProfileNumber()}"></p>-->
         <p th:text="#{axialCompr.steel}+': '+${result.getSteel().getSteelName()}"></p>
         <span>l<sub>ef</sub>: </span><p th:text="${result.getEffectiveLengthY()}"></p>
         <span>&#955;: </span><p th:text="${#numbers.formatDecimal(result.getSlendernessY(),1,3)}"></p>
