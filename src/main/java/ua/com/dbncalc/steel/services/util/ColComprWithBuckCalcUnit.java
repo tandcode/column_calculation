@@ -5,8 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import ua.com.dbncalc.steel.dto.ColComprWithBuckDto;
-import ua.com.dbncalc.steel.models.sections.IProfileGost8239_89;
 import ua.com.dbncalc.steel.models.sections.Section;
+import ua.com.dbncalc.steel.models.sections.ShapedSection;
+import ua.com.dbncalc.steel.models.sections.WeldedIBeamSection;
 import ua.com.dbncalc.steel.models.steels.Steel;
 import ua.com.dbncalc.steel.repositories.*;
 import ua.com.dbncalc.steel.services.Table8_1Entity;
@@ -28,17 +29,7 @@ public class ColComprWithBuckCalcUnit {
     // TODO: 04.05.2021 replace the different repositories of sections by one table of sections
     // TODO: 04.05.2021 Implement calculation geom props for welded I-beam
     @Autowired
-    private IProfileGost8239_89Repository iProfileGost8239_89Repository;
-    @Autowired
-    private IProfileGost19425_74Repository iProfileGost19425_74Repository;
-    @Autowired
-    private UProfileGost8240_89ParallelFlangeRepository uProfileGost8240_89ParallelFlangeRepository;
-    @Autowired
-    private UProfileGost8240_89SlopeFlangeRepository uProfileGost8240_89SlopeFlangeRepository;
-    @Autowired
-    private HollowSquareGost30245_94Repository hollowSquareGost30245_94Repository;
-    @Autowired
-    private HollowRectangleGost30245_94Repository hollowRectangleGost30245_94Repository;
+    private SectionRepository sectionRepository;
 
     // TODO: realize calculation for Z axis
 
@@ -109,34 +100,29 @@ public class ColComprWithBuckCalcUnit {
     private Double colComprWithBuckModulusY;
 
     public void loadSectionData(){
+        // TODO: 12.05.2021 replase string with constant or move to config file
 
-        // TODO : access DB data
-        // TODO: 04.05.2021 probably conflate standard repositories
-        switch (input.getSectionStandard()){
-            case "gost8239-89": section = iProfileGost8239_89Repository
-                    .findByProfileNumber(input.getSectionNumber())
-                    .get(0);
-                break;
-            case "gost19425-74": section = iProfileGost19425_74Repository
-                    .findByProfileNumber(input.getSectionNumber())
-                    .get(0);
-                break;
-            case "gost8240-89-parallel-flange": section = uProfileGost8240_89ParallelFlangeRepository
-                    .findByProfileNumber(input.getSectionNumber())
-                    .get(0);
-                break;
-            case "gost8240-89-slope-flange": section = uProfileGost8240_89SlopeFlangeRepository
-                    .findByProfileNumber(input.getSectionNumber())
-                    .get(0);
-                break;
-            case "gost302245-94-rectangle": section = hollowRectangleGost30245_94Repository
-                    .findByProfileNumber(input.getSectionNumber())
-                    .get(0);
-                break;
-            case "gost302245-94-square": section = hollowSquareGost30245_94Repository
-                    .findByProfileNumber(input.getSectionNumber())
-                    .get(0);
-        }
+        section = input.getSectionType().equals("weldedBeam") ?
+                initWeldedBeam() :
+                sectionRepository
+                .findByStandardAndProfileNumber(input.getSectionStandard(), input.getSectionNumber())
+                .get(0);
+    }
+
+    // TODO: 12.05.2021 swith to javax.measure (see dependency)
+    private Section initWeldedBeam() {
+        Double flangeWidth = input.getFlangeWidth();
+        Double flangeThickness = input.getFlangeThickness();
+        Double webDepth = input.getWebDepth();
+        Double webThickness = input.getWebThickness();
+
+        Double area = 2 * flangeWidth * flangeThickness + webDepth * webThickness;
+        Double width = flangeWidth;
+        Double depth = webDepth + 2 * flangeThickness;
+
+
+        Section weldedBeam = new WeldedIBeamSection();
+        return weldedBeam;
     }
 
     // TODO: 03.05.2021 implement chosing right thickness

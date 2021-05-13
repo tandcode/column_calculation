@@ -1,18 +1,17 @@
 package ua.com.dbncalc.steel.models.sections;
 
-import javax.persistence.Entity;
-// TODO : handle welded beam from form
-public class WeldedIBeamSection extends IBeamSection {
+import lombok.Data;
 
+// TODO : handle welded beam from form
+@Data
+public class WeldedIBeamSection extends Section {
     //leg of the weld between web and flange (k) in mm
     private Double legOfWeld;
 
-    public Double getLegOfWeld() {
-        return legOfWeld;
-    }
-
-    public void setLegOfWeld(Double legOfWeld) {
-        this.legOfWeld = legOfWeld;
-    }
+    //welded beam sheets in mm
+    private Double flangeWidth;
+    private Double flangeThickness;
+    private Double webDepth;
+    private Double webThickness;
 
 }

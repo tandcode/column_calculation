@@ -1,14 +1,16 @@
 package ua.com.dbncalc.steel.models;
 
-import ua.com.dbncalc.steel.models.sections.IProfileGost8239_89;
+import lombok.Data;
 import ua.com.dbncalc.steel.models.sections.Section;
+import ua.com.dbncalc.steel.models.sections.ShapedSection;
 import ua.com.dbncalc.steel.models.steels.Steel;
 
+@Data
 public class ColComprWithBuckInput {
 
     private int id;
 
-    private IProfileGost8239_89 section;
+    private Section section;
 
     //element length in m
     private Double length;
@@ -50,91 +52,4 @@ public class ColComprWithBuckInput {
         this.ownWeightIncluded = ownWeightIncluded;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public IProfileGost8239_89 getSection() {
-        return section;
-    }
-
-    public Double getLength() {
-        return length;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setSection(IProfileGost8239_89 section) {
-        this.section = section;
-    }
-
-    public void setLength(Double length) {
-        this.length = length;
-    }
-
-    public void setEstimatedLengthFactor(Double estimatedLengthFactor) {
-        this.estimatedLengthFactor = estimatedLengthFactor;
-    }
-
-    public void setWorkingConditionsFactor(Double workingConditionsFactor) {
-        this.workingConditionsFactor = workingConditionsFactor;
-    }
-
-    public void setReliabilityFactorForResponsibility(Double reliabilityFactorForResponsibility) {
-        this.reliabilityFactorForResponsibility = reliabilityFactorForResponsibility;
-    }
-
-    public void setSteel(Steel steel) {
-        this.steel = steel;
-    }
-
-    public void setMoment(Double moment) {
-        this.moment = moment;
-    }
-
-    public void setNormalForce(Double normalForce) {
-        this.normalForce = normalForce;
-    }
-
-    public void setTraverseForce(Double traverseForce) {
-        this.traverseForce = traverseForce;
-    }
-
-    public void setOwnWeightIncluded(Boolean ownWeightIncluded) {
-        this.ownWeightIncluded = ownWeightIncluded;
-    }
-
-    public Double getEstimatedLengthFactor() {
-        return estimatedLengthFactor;
-    }
-
-    public Double getWorkingConditionsFactor() {
-        return workingConditionsFactor;
-    }
-
-    public Double getReliabilityFactorForResponsibility() {
-        return reliabilityFactorForResponsibility;
-    }
-
-    public Steel getSteel() {
-        return steel;
-    }
-
-    public Double getMoment() {
-        return moment;
-    }
-
-    public Double getNormalForce() {
-        return normalForce;
-    }
-
-    public Double getTraverseForce() {
-        return traverseForce;
-    }
-
-    public Boolean getOwnWeightIncluded() {
-        return ownWeightIncluded;
-    }
 }

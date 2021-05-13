@@ -3,12 +3,15 @@ package ua.com.dbncalc.steel.models.sections;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 @Data
 @NoArgsConstructor
-@MappedSuperclass
-public abstract class HollowRectangleSection extends Section {
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public class HollowSection extends ShapedSection {
 
     //web thickness (s) in mm
     private Double webThick;

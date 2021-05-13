@@ -14,6 +14,12 @@ public class ColComprWithBuckDto {
     private String sectionStandard;
     private String sectionNumber;
 
+    //optional welded beam params
+    private Double flangeWidth;
+    private Double flangeThickness;
+    private Double webDepth;
+    private Double webThickness;
+
     //element length in m
     private Double length;
     //estimated length factor

@@ -1,5 +1,6 @@
 package ua.com.dbncalc.steel.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,11 @@ public class SpringConfig implements WebMvcConfigurer {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ColComprWithBuckCalcUnit colComprWithBuckCalcUnit(){
         return new ColComprWithBuckCalcUnit();
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
     @Override

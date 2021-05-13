@@ -1,29 +1,16 @@
 package ua.com.dbncalc.steel.models.sections;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
 @Data
-@NoArgsConstructor
 @MappedSuperclass
-public abstract class Section {
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
+public class Section {
+    //section depth (h) in mm
+    private Double depth;
 
-    //profile number(identifier)
-    private String profileNumber;
-
-    //section height (h) in mm
-    private Double height;
-
-    //section breadth (b) in mm
-    private Double breadth;
+    //section width (b) in mm
+    private Double width;
 
     //section area (A) in sm^2
     private Double area;

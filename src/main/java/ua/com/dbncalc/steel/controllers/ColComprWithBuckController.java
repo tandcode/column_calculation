@@ -9,6 +9,7 @@ import ua.com.dbncalc.steel.dto.ColComprWithBuckDto;
 import ua.com.dbncalc.steel.models.steels.Steel;
 import ua.com.dbncalc.steel.repositories.SteelRepository;
 import ua.com.dbncalc.steel.services.ColComprWithBuckService;
+import ua.com.dbncalc.steel.services.SectionService;
 
 @Controller
 public class ColComprWithBuckController {
@@ -22,10 +23,13 @@ public class ColComprWithBuckController {
     @Autowired
     private SteelRepository steelResistRepository;
 
+    @Autowired
+    private SectionService sectionService;
 
     @GetMapping("/col")
     public String columnCompressionWithBucklingForm(Model model) {
         model.addAttribute("colComprWithBuckDto", new ColComprWithBuckDto());
+        model.addAttribute("sections", sectionService.getProfileNumbers());
         model.addAttribute("result", null);
         return "colCalc";
     }
