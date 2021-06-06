@@ -29,5 +29,5 @@ public class UProfileSection extends ShapedSection {
     private Double firstMomentAboutYAxis;
 
     //section length to center of the weight (y0) in mm
-    private Double lengthToCenterOfTheWeight;
+    private Double centerOfTheWeight;
 }

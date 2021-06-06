@@ -23,16 +23,16 @@
                 <div class="row form-group">
                     <label class="col-md-2 col-form-label" th:text="#{axialCompr.section}">Section</label>
 <!--TODO: Implement the interactive choosing a standard. (consider using react)-->
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div class="btn-group btn-group-toggle" data-toggle="buttons" id="sectiontype">
                             <label class="btn btn-secondary active" th:title="#{axialCompr.IBeam}">
-                                <input type="radio" onclick="javascript:chooseStandard();" id="i-beam" value="i-beam" name="sectionType" autocomplete="off" checked th:field="*{sectionType}">
-                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="i-profile" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <input type="radio" onclick="javascript:chooseStandard();" id="I_BEAM" value="I_BEAM" name="sectionType" autocomplete="off" checked th:field="*{sectionType}">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="i-beam" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path d="m 1,0 h 14 a 1 1 0 0 1 0 2 H 10.1 a 1.4 1.4 0 0 0 -1.4 1.4 v 9.2 a 1.4 1.4 0 0 0 1.4 1.4 H 15 a 1 1 0 0 1 0 2 H 1 a 1 1 0 0 1 0 -2 h 4.9 a 1.4 1.4 0 0 0 1.4 -1.4 V 3.4 a 1.4 1.4 0 0 0 -1.4 -1.4 H 1 a 1 1 0 0 1 0 -2 Z"/>
                                 </svg>
                             </label>
                             <label class="btn btn-secondary" th:title="#{axialCompr.weldedIBeam}">
-                                <input type="radio" onclick="javascript:chooseStandard();" id="welded-i-beam" value="welded-i-beam" name="sectionType" autocomplete="off" th:field="*{sectionType}">
+                                <input type="radio" onclick="javascript:chooseStandard();" id="WELDED_I_BEAM" value="WELDED_I_BEAM" name="sectionType" autocomplete="off" th:field="*{sectionType}">
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="welded-i-beam" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <rect width="16" height="2" x="0" y="0" ry="1" />
                                     <rect width="16" height="2" x="0" y="14" ry="1" />
@@ -40,13 +40,13 @@
                                 </svg>
                             </label>
                             <label class="btn btn-secondary" th:title="#{axialCompr.UBeam}">
-                                <input type="radio" onclick="javascript:chooseStandard();" id="u-beam" value="u-beam" name="sectionType" autocomplete="off" th:field="*{sectionType}">
+                                <input type="radio" onclick="javascript:chooseStandard();" id="U_PROFILE" value="U_PROFILE" name="sectionType" autocomplete="off" th:field="*{sectionType}">
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="u-profile" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path d="m 11.5,0 a 1 1 0 0 1 0 2 H 6.6 a 1.4 1.4 0 0 0 -1.4 1.4 v 9.2 a 1.4 1.4 0 0 0 1.4 1.4 h 4.9 a 1 1 0 0 1 0 2 H 3.8 V 0 Z"/>
                                 </svg>
                             </label>
                             <label class="btn btn-secondary" th:title="#{axialCompr.hollowProfile}">
-                                <input type="radio" onclick="javascript:chooseStandard();" id="hollow-section" value="hollow-section" name="sectionType" autocomplete="off" th:field="*{sectionType}">
+                                <input type="radio" onclick="javascript:chooseStandard();" id="HOLLOW" value="HOLLOW" name="sectionType" autocomplete="off" th:field="*{sectionType}">
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="hollow-profile" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M2.25,0h11.51C14.99,0,16,1.01,16,2.25v11.51c0,1.24-1.01,2.25-2.25,2.25H2.25C1.01,16,0,14.99,0,13.75V3h1.5v10.75 c0,0.42,0.34,0.75,0.75,0.75h11.5c0.42,0,0.75-0.34,0.75-0.75V2.25c0-0.42-0.34-0.75-0.75-0.75H2.25C1.83,1.5,1.5,1.84,1.5,2.25V3H0 V2.25C0,1.01,1.01,0,2.25,0z"/>
                                 </svg>
@@ -55,69 +55,74 @@
                     </div>
                 </div>
 
-                <div class="row form-group">
-                    <label for="sectionstandard" class="col-2 col-form-label"
-                           th:text="#{axialCompr.standard}">Standard</label>
-                    <div class="col-5">
+                <div id="shaped_section_input">
+                    <div class="row form-group">
+                        <label for="sectionstandard" class="col-2 col-form-label"
+                               th:text="#{axialCompr.standard}">Standard</label>
+                        <div class="col-6">
 
-                        <select class="custom-select" id="sectionstandard" th:name="standard" th:field="*{sectionStandard}">
-                            <option value="" th:text="#{axialCompr.chooseStandard}">Choose standard</option>
-                            <option id="gost8239-89" value="gost8239-89"
-                                    th:text="#{axialCompr.gost8239-89}">GOST 8239-89</option>
-                            <option id="gost19425-74-i-beam" value="gost19425-74-i-beam"
-                                    th:text="#{axialCompr.gost19425-74}">GOST 19425-74*</option>
-                            <option id="gost8240-89p" value="gost8240-89-parallel-flange"
-                                    th:text="#{axialCompr.gost8240-89p}" style="display: none">GOST 8240-89(with parallel flange)</option>
-                            <option id="gost8240-89s" value="gost8240-89-slope-flange"
-                                    th:text="#{axialCompr.gost8240-89s}" style="display: none">GOST 8240-89(with slope flange)</option>
-                            <option id="gost302245-94r" value="gost302245-94-rectangle"
-                                    th:text="#{axialCompr.gost302245-94r}" style="display: none">GOST 302245-94(rectangle profiles)</option>
-                            <option id="gost302245-94s" value="gost302245-94-square"
-                                    th:text="#{axialCompr.gost302245-94s}" style="display: none">GOST 302245-94(square profiles)</option>
-                        </select>
+                            <select class="custom-select" id="sectionstandard" th:name="standard" th:field="*{sectionStandard}">
+                                <option value="" th:text="#{axialCompr.chooseStandard}">Choose standard</option>
+                                <option id="gost8239-89" value="gost8239-89"
+                                        th:text="#{axialCompr.gost8239-89}">GOST 8239-89</option>
+                                <option id="gost19425-74-i-beam" value="gost19425-74-i-beam"
+                                        th:text="#{axialCompr.gost19425-74}">GOST 19425-74*</option>
+                                <option id="gost8240-89p" value="gost8240-89-parallel-flange"
+                                        th:text="#{axialCompr.gost8240-89p}" style="display: none">GOST 8240-89(with parallel flange)</option>
+                                <option id="gost8240-89s" value="gost8240-89-slope-flange"
+                                        th:text="#{axialCompr.gost8240-89s}" style="display: none">GOST 8240-89(with slope flange)</option>
+                                <option id="gost302245-94r" value="gost302245-94-rectangle"
+                                        th:text="#{axialCompr.gost302245-94r}" style="display: none">GOST 302245-94(rectangle profiles)</option>
+                                <option id="gost302245-94s" value="gost302245-94-square"
+                                        th:text="#{axialCompr.gost302245-94s}" style="display: none">GOST 302245-94(square profiles)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="sectionNumber" class="col-2 col-form-label">#</label>
+                        <div class="col-6">
+
+                            <select class="custom-select" id="sectionNumber" th:name="standard" th:field="*{sectionNumber}">
+                                <option value="" th:text="#{axialCompr.chooseProfile}">Choose profile</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="row form-group">
-                    <label for="sectionNumber" class="col-2 col-form-label">#</label>
-                    <div class="col-5">
-
-                        <select class="custom-select" id="sectionNumber" th:name="standard" th:field="*{sectionNumber}">
-                            <option value="" th:text="#{axialCompr.chooseProfile}">Choose profile</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row form-group">
-                    <label class="col-2 col-form-label">Welded beam</label>
-                    <div class="input-group col-2">
-                        <div>
-                            <input type="text" class="form-control" th:placeholder="#{axialCompr.flangeWidth}"
-                                   th:field="*{flangeWidth}" />
-                            <div class="input-group-append">
-                                <span class="input-group-text" th:text="#{axialCompr.mm}">mm</span>
+                <div id="welded_section_input" style="display: none">
+                    <div class="row form-group">
+                        <label class="col-2 col-form-label">Welded beam</label>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:placeholder="#{axialCompr.flangeWidth}"
+                                       th:field="*{flangeWidth}" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialCompr.mm}">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:placeholder="#{axialCompr.flangeThickness}"
+                                       th:field="*{flangeThickness}" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialCompr.mm}">mm</span>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <input type="text" class="form-control" th:placeholder="#{axialCompr.webDepth}"
-                                   th:field="*{webDepth}" />
-                            <div class="input-group-append">
-                                <span class="input-group-text" th:text="#{axialCompr.mm}">mm</span>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:placeholder="#{axialCompr.webDepth}"
+                                       th:field="*{webDepth}" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialCompr.mm}">mm</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div>
-                            <input type="text" class="form-control" th:placeholder="#{axialCompr.flangeThickness}"
-                                   th:field="*{flangeThickness}" />
-                            <div class="input-group-append">
-                                <span class="input-group-text" th:text="#{axialCompr.mm}">mm</span>
-                            </div>
-                        </div>
-                        <div>
-                            <input type="text" class="form-control" th:placeholder="#{axialCompr.webThickness}"
-                                   th:field="*{webThickness}" />
-                            <div class="input-group-append">
-                                <span class="input-group-text" th:text="#{axialCompr.mm}">mm</span>
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:placeholder="#{axialCompr.webThickness}"
+                                       th:field="*{webThickness}" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialCompr.mm}">mm</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -125,7 +130,7 @@
 
                 <div class="row form-group">
                     <label for="length" class="col-2 col-form-label">l</label>
-                    <div class="input-group col-5">
+                    <div class="input-group col-6">
                         <input type="text" class="form-control" id="length" th:placeholder="#{axialCompr.memberLength}"
                                th:field="*{length}" />
                         <div class="input-group-append">
@@ -136,28 +141,28 @@
 
                 <div class="row form-group">
                     <label for="mu" class="col-2 col-form-label">&#956;</label>
-                    <div class="col-5">
+                    <div class="col-6">
                         <input type="text" class="form-control" id="mu" th:placeholder="#{axialCompr.effectiveLengthFac}"
                                th:field="*{estimatedLengthFactor}" />
                     </div>
                 </div>
                 <div class="row form-group">
                     <label for="gammaC" class="col-2 col-form-label">&#947;<sub>c</sub></label>
-                    <div class="col-5">
+                    <div class="col-6">
                         <input type="text" class="form-control" id="gammaC" th:placeholder="#{axialCompr.workConditFac}"
                                th:field="*{workingConditionsFactor}" />
                     </div>
                 </div>
                 <div class="row form-group">
                     <label for="gammaN" class="col-2 col-form-label">&#947;<sub>n</sub></label>
-                    <div class="col-5">
+                    <div class="col-6">
                         <input type="text" class="form-control" id="gammaN" th:placeholder="#{axialCompr.reliabilityFac}"
                                th:field="*{reliabilityFactorForResponsibility}">
                     </div>
                 </div>
                 <div class="row form-group">
                     <label for="steel" class="col-2 col-form-label" th:text="#{axialCompr.steel}">Steel</label>
-                    <div class="col-5">
+                    <div class="col-6">
                         <select class="custom-select" id="steel" th:field="*{steel}">
                             <option th:value="''" th:text="#{axialCompr.chooseSteel}">Choose steel</option>
                             <option th:value="S235" th:text="#{axialCompr.s235}">C235</option>
@@ -170,7 +175,7 @@
                 </div>
                 <div class="row form-group">
                     <label class="col-2 col-form-label" th:text="#{axialCompr.loads}">Loads</label>
-                    <div class="col-5">
+                    <div class="col-6">
                         <div class="row">
                             <label for="moment" class="col-1 col-form-label">M</label>
                             <div class="input-group col">
@@ -233,45 +238,60 @@
 <!--    TODO:remove this hardcode-->
     <script type="text/javascript">
         function chooseStandard() {
+            let weldedInputBlock = document.getElementById("welded_section_input");
+            let shapedInputBlock = document.getElementById("shaped_section_input");
+
             switch ($("input[type='radio'][name='sectionType']:checked").val()) {
-                case "i-beam":
+                case "I_BEAM":
                     document.getElementById("gost8239-89").style.display = "block";
                     document.getElementById("gost19425-74-i-beam").style.display = "block";
                     document.getElementById("gost8240-89p").style.display = "none";
                     document.getElementById("gost8240-89s").style.display = "none";
                     document.getElementById("gost302245-94r").style.display = "none";
                     document.getElementById("gost302245-94s").style.display = "none";
+                    weldedInputBlock.style.display = "none";
+                    shapedInputBlock.style.display = "block";
                     break;
-                case "u-beam":
+                case "U_PROFILE":
                     document.getElementById("gost8239-89").style.display = "none";
                     document.getElementById("gost19425-74-i-beam").style.display = "none";
                     document.getElementById("gost8240-89p").style.display = "block";
                     document.getElementById("gost8240-89s").style.display = "block";
                     document.getElementById("gost302245-94r").style.display = "none";
                     document.getElementById("gost302245-94s").style.display = "none";
+                    weldedInputBlock.style.display = "none";
+                    shapedInputBlock.style.display = "block";
                     break;
-                case "hollow-section":
+                case "HOLLOW":
                     document.getElementById("gost8239-89").style.display = "none";
                     document.getElementById("gost19425-74-i-beam").style.display = "none";
                     document.getElementById("gost8240-89p").style.display = "none";
                     document.getElementById("gost8240-89s").style.display = "none";
                     document.getElementById("gost302245-94r").style.display = "block";
                     document.getElementById("gost302245-94s").style.display = "block";
+                    weldedInputBlock.style.display = "none";
+                    shapedInputBlock.style.display = "block";
+                    break;
+                case "WELDED_I_BEAM":
+                    weldedInputBlock.style.display = "block";
+                    shapedInputBlock.style.display = "none";
             }
             document.getElementById("sectionstandard").selectedIndex = 0;
         }
     </script>
-    <script th:inline="javascript">
-        window.onload = init;
+    <script th:inline="javascript" type="text/javascript">
+        window.addEventListener("load", init);
 
         function init() {
             let profilesByStandard = [[${sections}]];
-            const standardDdl = document.getElementById("sectionstandard");
+            let standardDdl = document.getElementById("sectionstandard");
             let profilesDdl = document.getElementById("sectionNumber");
+            if (standardDdl.value !== "") setOptions(profilesDdl, profilesByStandard[standardDdl.value]);
             standardDdl.addEventListener('change', function () {
                 setOptions(profilesDdl, profilesByStandard[standardDdl.value]);
             });
         }
+
 
         function setOptions(dropDown, options) {
             dropDown.innerHTML = '';
@@ -279,6 +299,10 @@
                 let opt = document.createElement('option');
                 opt.value = value;
                 opt.textContent = value;
+                const sectionNumber = [[${sectionNumber}]];
+                if(sectionNumber === value) {
+                    opt.selected = true;
+                }
                 dropDown.appendChild(opt);
             });
         }

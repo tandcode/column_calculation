@@ -3,7 +3,6 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-
     <link th:href="@{/styles/bootstrap.css}" rel="stylesheet">
 </head>
 <body>
@@ -11,6 +10,7 @@
     th:fragment="header">
 
         <span class="p-2 border">
+<!--            TODO: do not clear the page while changing language-->
                 <a class="p-2 text-dark" th:href="@{'?lang=en'}" th:text="#{lang.en}"></a>
                 <a class="p-2 text-dark" th:href="@{'?lang=ua'}" th:text="#{lang.ua}"></a>
         </span>

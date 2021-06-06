@@ -10,6 +10,7 @@ import ua.com.dbncalc.steel.models.steels.Steel;
 import ua.com.dbncalc.steel.repositories.SteelRepository;
 import ua.com.dbncalc.steel.services.ColComprWithBuckService;
 import ua.com.dbncalc.steel.services.SectionService;
+import ua.com.dbncalc.steel.services.util.ColComprWithBuckCalcUnit;
 
 @Controller
 public class ColComprWithBuckController {
@@ -31,6 +32,7 @@ public class ColComprWithBuckController {
         model.addAttribute("colComprWithBuckDto", new ColComprWithBuckDto());
         model.addAttribute("sections", sectionService.getProfileNumbers());
         model.addAttribute("result", null);
+        model.addAttribute("sectionNumber", null);
         return "colCalc";
     }
 
@@ -41,7 +43,11 @@ public class ColComprWithBuckController {
     )
     {
         inputDao.create(colComprWithBuckDto);
-        model.addAttribute("result", service.calculate(colComprWithBuckDto));
+        model.addAttribute("sections", sectionService.getProfileNumbers());
+
+        ColComprWithBuckCalcUnit result = service.calculate(colComprWithBuckDto);
+        model.addAttribute("result", result);
+        model.addAttribute("sectionNumber", result.getInput().getSectionNumber());
         return "colCalc";
     }
 

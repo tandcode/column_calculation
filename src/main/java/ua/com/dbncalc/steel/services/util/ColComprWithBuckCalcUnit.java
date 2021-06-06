@@ -4,27 +4,38 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import tech.units.indriya.ComparableQuantity;
+import tech.units.indriya.quantity.Quantities;
 import ua.com.dbncalc.steel.dto.ColComprWithBuckDto;
 import ua.com.dbncalc.steel.models.sections.Section;
-import ua.com.dbncalc.steel.models.sections.ShapedSection;
-import ua.com.dbncalc.steel.models.sections.WeldedIBeamSection;
-import ua.com.dbncalc.steel.models.sections.builder.WeldedIBeamSectionBuilder;
+import ua.com.dbncalc.steel.models.sections.builder.SectionWithUnitsBuilder;
+import ua.com.dbncalc.steel.models.sections.builder.WeldedIBeamSectionWithUnitsBuilder;
+import ua.com.dbncalc.steel.models.sections.with_units.SectionWithUnits;
 import ua.com.dbncalc.steel.models.steels.Steel;
-import ua.com.dbncalc.steel.repositories.*;
+import ua.com.dbncalc.steel.repositories.SectionRepository;
+import ua.com.dbncalc.steel.repositories.SteelRepository;
 import ua.com.dbncalc.steel.services.Table8_1Entity;
+import ua.com.dbncalc.steel.services.util.units.quantity.*;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.*;
 import java.util.Map;
 
-import static java.lang.Math.sqrt;
+import static tech.units.indriya.AbstractUnit.ONE;
+import static tech.units.indriya.unit.Units.METRE;
+import static ua.com.dbncalc.steel.services.util.units.StructuralUnits.*;
+
 @NoArgsConstructor
 @Getter
 @Setter
 //@Component
 public class ColComprWithBuckCalcUnit {
 
+    public static final ComparableQuantity<Density> steelDensity = Quantities.getQuantity(7850, KILOGRAM_PER_CUBIC_METRE);
+
     private ColComprWithBuckDto input;
     // TODO: 03.05.2021 change to section
-    private Section section;
+    private SectionWithUnits section;
 
     private Steel steel;
     // TODO: 04.05.2021 replace the different repositories of sections by one table of sections
@@ -37,18 +48,36 @@ public class ColComprWithBuckCalcUnit {
     @Autowired
     private SteelRepository steelRepository;
 
-    //effective length Y axis (lefY) in m
-    private Double effectiveLengthY;
+    private Section.SectionType sectionType;
+    //element length in m
+    private ComparableQuantity<Length> length;
+    //estimated length factor
+    private ComparableQuantity<Dimensionless> estimatedLengthFactor;
+    //working conditions factor (gammaC)
+    private ComparableQuantity<Dimensionless> workingConditionsFactor;
+    //reliability factor for responsibility(gammaN)
+    private ComparableQuantity<Dimensionless> reliabilityFactorForResponsibility;
+    //calculation moment (M) in t*m
+    private ComparableQuantity<Moment> moment;
+    //normal force (N)
+    private ComparableQuantity<Force> normalForce;
+    //normal force (N)
+    private ComparableQuantity<Force> normalForceWithOwnWeight;
+    //traverse force (Q)
+    private ComparableQuantity<Force> traverseForce;
+
+    //effective length Y axis (lefY)
+    private ComparableQuantity<Length> effectiveLengthY;
 
     //slenderness Y axis (lambdaY)
-    private Double slendernessY;
+    private ComparableQuantity<Dimensionless> slendernessY;
 
     //non dimensional slenderness Y axis (overline lambdaY)
-    private Double nonDimSlendernessY;
+    private ComparableQuantity<Dimensionless> nonDimSlendernessY;
 
     //TODO: implement choosing strange depending on shaped profile or from plates
-    //design yield strange (Ry) in N/mm^2
-    private Double designYieldStrange;
+    //design yield strange (Ry) in MPa
+    private ComparableQuantity<Pressure> designYieldStrange;
 
         // TODO : realize conditional initialization
 //    {
@@ -57,12 +86,11 @@ public class ColComprWithBuckCalcUnit {
 //
 //    }
 
-    //steel modulus of elasticity (E) in MPa - megapascal
-    private static Double modulusOfElasticity = 2.06e5;
+    //steel modulus of elasticity (E)
+    private static Quantity<Pressure> modulusOfElasticity = Quantities.getQuantity(2.06e5, MEGAPASCAL);
 
     public void calculate(ColComprWithBuckDto input) {
-        this.input = input;
-//        this.input.getSection().setNumber(this.input.getSectionNumber());
+        loadInput(input);
         loadSteelData();
         loadSectionData();
         calculateEffectiveLengthY();
@@ -71,6 +99,18 @@ public class ColComprWithBuckCalcUnit {
         calculateDeltaModulusY();
         calculateBucklingModulusY();
         calculateColComprWithBuckModulusY();
+    }
+
+    // TODO: 29.05.2021 implement chosing unit at front
+    private void loadInput(ColComprWithBuckDto input) {
+        this.input = input;
+        length = Quantities.getQuantity(input.getLength(), METRE);
+        estimatedLengthFactor = Quantities.getQuantity(input.getEstimatedLengthFactor(), ONE);
+        workingConditionsFactor = Quantities.getQuantity(input.getWorkingConditionsFactor(), ONE);
+        reliabilityFactorForResponsibility = Quantities.getQuantity(input.getReliabilityFactorForResponsibility(), ONE);
+        moment = Quantities.getQuantity(input.getMoment(), TON_FORCE_METRE);
+        normalForce = Quantities.getQuantity(input.getNormalForce(), TON_FORCE);
+        traverseForce = Quantities.getQuantity(input.getTraverseForce(), TON_FORCE);
     }
 
     private enum TypeOfSlenderCurve{
@@ -89,62 +129,76 @@ public class ColComprWithBuckCalcUnit {
     //TODO : implement getting slender curve from section data
 
     private TypeOfSlenderCurve slenderCurve;
-    {
-        slenderCurve = TypeOfSlenderCurve.B;
-    }
 
-    private Double deltaModulusY;
+    private ComparableQuantity<Dimensionless> deltaModulusY;
 
-    //
-    private Double bucklingModulusY;
+    private ComparableQuantity<Dimensionless> bucklingModulusY;
 
-    private Double colComprWithBuckModulusY;
+    private ComparableQuantity<Dimensionless> colComprWithBuckModulusY;
 
-    public void loadSectionData(){
-        // TODO: 12.05.2021 replase string with constant or move to config file
-
-        section = input.getSectionType().equals("welded-i-beam") ?
-                initWeldedBeam() :
-                sectionRepository
+    private void loadSectionData(){
+        // TODO: 12.05.2021 replace string with constant or move to config file
+        sectionType = Section.SectionType.valueOf(input.getSectionType());
+        if(sectionType.equals(Section.SectionType.WELDED_I_BEAM)) {
+            section = initWeldedBeam();
+        }
+        else {
+            Section sectionFromDB = sectionRepository
                 .findByStandardAndProfileNumber(input.getSectionStandard(), input.getSectionNumber())
                 .get(0);
+            // TODO: 01.06.2021 section that are using in calculation cut the additional info. consider to load full info
+            section = SectionWithUnitsBuilder.aSectionWithUnits()
+                    .withDepth(Quantities.getQuantity(sectionFromDB.getDepth(), MILLIMETRE))
+                    .withWidth(Quantities.getQuantity(sectionFromDB.getWidth(), MILLIMETRE))
+                    .withArea(Quantities.getQuantity(sectionFromDB.getArea(), SQUARE_CENTIMETRE))
+                    .withWeightPerLength(Quantities.getQuantity(sectionFromDB.getWeightPerLength(), KILOGRAM_PER_METRE))
+                    .withSecondMomentAboutYAxis(Quantities.getQuantity(sectionFromDB.getSecondMomentAboutYAxis(), CENTIMETRE_TO_THE_FOURTH))
+                    .withSecondMomentAboutZAxis(Quantities.getQuantity(sectionFromDB.getSecondMomentAboutZAxis(), CENTIMETRE_TO_THE_FOURTH))
+                    .withSectionModulusAboutYAxis(Quantities.getQuantity(sectionFromDB.getSectionModulusAboutYAxis(), CENTIMETRE_TO_THE_THIRD))
+                    .withSectionModulusAboutZAxis(Quantities.getQuantity(sectionFromDB.getSectionModulusAboutZAxis(), CENTIMETRE_TO_THE_THIRD))
+                    .withRadiusOfGyrationYAxis(Quantities.getQuantity(sectionFromDB.getRadiusOfGyrationYAxis(), MILLIMETRE))
+                    .withRadiusOfGyrationZAxis(Quantities.getQuantity(sectionFromDB.getRadiusOfGyrationZAxis(), MILLIMETRE))
+                    .build();
+        }
     }
 
     // TODO: 12.05.2021 swith to javax.measure (see dependency)
-    private Section initWeldedBeam() {
-        Double flangeWidth = input.getFlangeWidth();
-        Double flangeThickness = input.getFlangeThickness();
-        Double webDepth = input.getWebDepth();
-        Double webThickness = input.getWebThickness();
+    // TODO: 18.05.2021 implement choosing unit from page
+    private SectionWithUnits initWeldedBeam() {
+        ComparableQuantity<Length> flangeWidth = Quantities.getQuantity(input.getFlangeWidth(), MILLIMETRE);
+        ComparableQuantity<Length> flangeThickness = Quantities.getQuantity(input.getFlangeThickness(), MILLIMETRE);
+        ComparableQuantity<Length> webDepth = Quantities.getQuantity(input.getWebDepth(), MILLIMETRE);
+        ComparableQuantity<Length> webThickness = Quantities.getQuantity(input.getWebThickness(), MILLIMETRE);
 
-        Double area = (2 * flangeWidth * flangeThickness + webDepth * webThickness) / 100;
-        Double width = flangeWidth;
-        Double depth = webDepth + 2 * flangeThickness;
+        ComparableQuantity<Area> area = flangeWidth.multiply(flangeThickness).multiply(2).asType(Area.class)
+                .add(webDepth.multiply(webThickness).asType(Area.class));
+        ComparableQuantity<Length> width = flangeWidth;
+        ComparableQuantity<Length> depth = webDepth.add(flangeThickness.multiply(2));
         // TODO: 13.05.2021 consider to move constants in separate file
-        Double weightPerLength = 7850 * area / 100;
+        ComparableQuantity<WeightPerLength> weightPerLength = steelDensity.multiply(area).asType(WeightPerLength.class);
 
-        //section second moment about Y axis (Iy) in sm^4
-        Double secondMomentAboutYAxis = (2 * (flangeWidth * Math.pow(flangeThickness, 3) / 12
-                + Math.pow((webDepth + flangeThickness) / 2, 2) * flangeThickness * flangeWidth)
-                + webThickness * Math.pow(webDepth, 3) / 12) / 10000;
+        //section second moment about Y axis (Iy) in sm^4 = 2 * (tf^3*bf/12 + ((hw+tf)/2)^2 * tf*bf) + hw^3*tw/12
+        ComparableQuantity<SecondMoment> secondMomentAboutYAxis = (Calc.pow(flangeThickness, 3).multiply(flangeWidth)).divide(12).asType(SecondMoment.class)
+                .add(Calc.pow(webDepth.add(flangeThickness).divide(2),2).multiply(flangeThickness).multiply(flangeWidth).asType(SecondMoment.class)).multiply(2)
+                .add((Calc.pow(webDepth, 3).multiply(webThickness)).divide(12).asType(SecondMoment.class));
 
         //section second moment about Z axis (Iz) in sm^4
-        Double secondMomentAboutZAxis = (2 * (flangeThickness * Math.pow(flangeWidth, 3) / 12)
-                + webDepth * Math.pow(webThickness, 3) / 12) / 10000;
+        ComparableQuantity<SecondMoment> secondMomentAboutZAxis = (Calc.pow(flangeWidth, 3).multiply(flangeThickness)).divide(12).multiply(2).asType(SecondMoment.class)
+                .add((Calc.pow(webThickness, 3).multiply(webDepth)).divide(12).asType(SecondMoment.class));
 
         //section modulus about Y axis (Wy) in sm^3
-        Double sectionModulusAboutYAxis = secondMomentAboutYAxis / (depth / 2) * 10;
+        ComparableQuantity<Volume> sectionModulusAboutYAxis = secondMomentAboutYAxis.divide(depth.divide(2)).asType(Volume.class);
 
         //section modulus about Z axis (Wz) in sm^3
-        Double sectionModulusAboutZAxis = secondMomentAboutZAxis / (width / 2) * 10;
+        ComparableQuantity<Volume> sectionModulusAboutZAxis = secondMomentAboutZAxis.divide(width.divide(2)).asType(Volume.class);
 
         //section radius of gyration Y axis (iy) in mm
-        Double radiusOfGyrationYAxis = Math.sqrt(secondMomentAboutYAxis / area) * 10;
+        ComparableQuantity<Length> radiusOfGyrationYAxis = Calc.sqrt(secondMomentAboutYAxis.divide(area)).asType(Length.class);
 
         //section radius of gyration Z axis (iz) in mm
-        Double radiusOfGyrationZAxis = Math.sqrt(secondMomentAboutZAxis / area) * 10;
+        ComparableQuantity<Length> radiusOfGyrationZAxis = Calc.sqrt(secondMomentAboutZAxis.divide(area)).asType(Length.class);
 
-        Section weldedBeam = WeldedIBeamSectionBuilder.aWeldedIBeamSection()
+        SectionWithUnits weldedBeam = WeldedIBeamSectionWithUnitsBuilder.aWeldedIBeamSectionWithUnits()
                 .withArea(area)
                 .withWidth(width)
                 .withDepth(depth)
@@ -154,7 +208,7 @@ public class ColComprWithBuckCalcUnit {
                 .withWebThickness(webThickness)
                 .withWeightPerLength(weightPerLength)
                 // TODO: 13.05.2021 remove hardcode
-                .withLegOfWeld(5.0)
+                .withLegOfWeld(Quantities.getQuantity(5, MILLIMETRE))
                 .withSecondMomentAboutYAxis(secondMomentAboutYAxis)
                 .withSecondMomentAboutZAxis(secondMomentAboutZAxis)
                 .withSectionModulusAboutYAxis(sectionModulusAboutYAxis)
@@ -166,63 +220,75 @@ public class ColComprWithBuckCalcUnit {
     }
 
     // TODO: 03.05.2021 implement chosing right thickness
-    public void loadSteelData(){
+    private void loadSteelData(){
         steel = steelRepository
                 .findBySteelName(input.getSteel())
                 .get(0);
         // TODO: 04.05.2021 handle null fields in steel table 
-        designYieldStrange = steel.getDesignYieldStrangeShape();
+        designYieldStrange = Quantities.getQuantity(steel.getDesignYieldStrangeShape(), MEGAPASCAL);
     }
 
     //TODO : maybe calculate fields during initialisation
 
     // lef(m)=mu*l(m)
-    public void calculateEffectiveLengthY() {
-        effectiveLengthY = input.getEstimatedLengthFactor() * input.getLength();
+    private void calculateEffectiveLengthY() {
+        effectiveLengthY = estimatedLengthFactor.multiply(length).asType(Length.class);
     }
 
     // lambda=lef[m]/i[mm]
-    public void calculateSlendernessY() {
-        slendernessY = effectiveLengthY / section.getRadiusOfGyrationYAxis() * 1000;
+    private void calculateSlendernessY() {
+        slendernessY = (ComparableQuantity<Dimensionless>) effectiveLengthY.divide(section.getRadiusOfGyrationYAxis()).toSystemUnit();
     }
 
     // overlineLambda=lambda*sqrt(Ry[MPa]/E[MPa])
-    public void calculateNonDimSlendernessY() {
-        nonDimSlendernessY = slendernessY * sqrt(designYieldStrange / modulusOfElasticity);
+    private void calculateNonDimSlendernessY() {
+        nonDimSlendernessY = slendernessY.multiply(Calc.sqrt(designYieldStrange.divide(modulusOfElasticity))).asType(Dimensionless.class);
     }
 
     // delta=9.87*(1-alpha+beta * overLambda) + overLambda^2
-    public void calculateDeltaModulusY(){
+    private void calculateDeltaModulusY(){
+        switch (sectionType) {
+            case HOLLOW: slenderCurve = TypeOfSlenderCurve.A;
+            break;
+            case I_BEAM:
+            case WELDED_I_BEAM: slenderCurve = TypeOfSlenderCurve.B;
+            break;
+            default:slenderCurve = TypeOfSlenderCurve.C;
+        }
 
         Table8_1Entity table8_1Entity = AlphaAndBetaCoefficients.get(slenderCurve);
-        Double alpha = table8_1Entity.getAlpha();
-        Double beta = table8_1Entity.getBeta();
+        ComparableQuantity<Dimensionless> alpha = Quantities.getQuantity(table8_1Entity.getAlpha(), ONE);
+        ComparableQuantity<Dimensionless> beta = Quantities.getQuantity(table8_1Entity.getBeta(), ONE);
 
-        setDeltaModulusY(9.87 * (1 - alpha + beta * nonDimSlendernessY) + nonDimSlendernessY * nonDimSlendernessY);
+        setDeltaModulusY(Quantities.getQuantity(9.87, ONE)
+                .multiply(Quantities.getQuantity(1, ONE).subtract(alpha).add(beta.multiply(nonDimSlendernessY).asType(Dimensionless.class))).asType(Dimensionless.class)
+                .add(Calc.pow(nonDimSlendernessY, 2).asType(Dimensionless.class)));
     }
 
     // phi=0.5/overLambda^2*(delta-sqrt(delta^2-39.48*overLambda^2))
-    public void calculateBucklingModulusY(){
-        if(nonDimSlendernessY < 0.4) {
-            bucklingModulusY = 1.0;
+    private void calculateBucklingModulusY(){
+        if(nonDimSlendernessY.isLessThan(Quantities.getQuantity(0.4, ONE))) {
+            bucklingModulusY = Quantities.getQuantity(1, ONE);
         }
         else {
-            Double bucklingModulusYFirst;
-            bucklingModulusYFirst = 0.5 / (nonDimSlendernessY * nonDimSlendernessY) * (deltaModulusY
-                    - sqrt(deltaModulusY * deltaModulusY - 39.48 * nonDimSlendernessY * nonDimSlendernessY));
+            ComparableQuantity<Dimensionless> bucklingModulusYFirst;
+            bucklingModulusYFirst = Quantities.getQuantity(0.5, ONE).divide(Calc.pow(nonDimSlendernessY, 2))
+                    .multiply(deltaModulusY.subtract(Calc.sqrt(Calc.pow(deltaModulusY, 2).asType(Dimensionless.class)
+                            .subtract(Quantities.getQuantity(39.48, ONE).multiply(Calc.pow(nonDimSlendernessY, 2))
+                                    .asType(Dimensionless.class))).asType(Dimensionless.class))).asType(Dimensionless.class);
 
-            Double minNonDimSlendernessY = 0.0;
+            ComparableQuantity<Dimensionless> minNonDimSlendernessY = Quantities.getQuantity(0, ONE);
             switch (slenderCurve){
-                case A: minNonDimSlendernessY = 3.8;
+                case A: minNonDimSlendernessY = Quantities.getQuantity(3.8, ONE);
                     break;
-                case B: minNonDimSlendernessY = 4.4;
+                case B: minNonDimSlendernessY = Quantities.getQuantity(4.4, ONE);
                     break;
-                case C: minNonDimSlendernessY = 5.8;
+                case C: minNonDimSlendernessY = Quantities.getQuantity(5.8, ONE);
             }
-            if(nonDimSlendernessY > minNonDimSlendernessY){
+            if(nonDimSlendernessY.isGreaterThan(minNonDimSlendernessY)){
                 // phi should be less then7.6/overlineLambda^2
-                Double checkValue = 7.6 / nonDimSlendernessY * nonDimSlendernessY;
-                bucklingModulusY = bucklingModulusYFirst > checkValue ? checkValue : bucklingModulusYFirst;
+                ComparableQuantity<Dimensionless> checkValue = Quantities.getQuantity(7.6, ONE).divide(Calc.pow(nonDimSlendernessY, 2)).asType(Dimensionless.class);
+                bucklingModulusY = bucklingModulusYFirst.isGreaterThan(checkValue) ? checkValue : bucklingModulusYFirst;
             }
             else {
                 bucklingModulusY = bucklingModulusYFirst;
@@ -230,50 +296,17 @@ public class ColComprWithBuckCalcUnit {
         }
     }
 
-    // TODO : implement including own weight
 
-    // N[t]*gammaN/(phi*A[cm^2]*Ry[MPa]*yc) <= 1
+    // N*gammaN/(phi*A*Ry*yc) <= 1
     // TODO : maybe implement inversion MPa > T/sm^2
     // TODO : implement second axis Z
-    public void calculateColComprWithBuckModulusY(){
-        colComprWithBuckModulusY = input.getNormalForce() * 9.81 * 10 * input.getReliabilityFactorForResponsibility() /
-                (bucklingModulusY * section.getArea() * designYieldStrange *
-                input.getWorkingConditionsFactor());
+    private void calculateColComprWithBuckModulusY(){
+        normalForceWithOwnWeight = input.getOwnWeightIncluded()
+                ? normalForce.add(section.getWeightPerLength().multiply(length).multiply(STANDARD_GRAVITY).asType(Force.class))
+                : normalForce;
+        colComprWithBuckModulusY = (ComparableQuantity<Dimensionless>) normalForceWithOwnWeight.multiply(reliabilityFactorForResponsibility)
+                .divide(bucklingModulusY.multiply(section.getArea()).multiply(designYieldStrange)
+                .multiply(workingConditionsFactor)).toSystemUnit();
     }
 
-    public ColComprWithBuckDto getInput() {
-        return input;
-    }
-
-    public Double getEffectiveLengthY() {
-        return effectiveLengthY;
-    }
-
-    public void setEffectiveLengthY(Double effectiveLengthY) {
-        this.effectiveLengthY = effectiveLengthY;
-    }
-
-    public Double getSlendernessY() {
-        return slendernessY;
-    }
-
-    public void setSlendernessY(Double slendernessY) {
-        this.slendernessY = slendernessY;
-    }
-
-    public Double getDesignYieldStrange() {
-        return designYieldStrange;
-    }
-
-    public void setDesignYieldStrange(Double designYieldStrange) {
-        this.designYieldStrange = designYieldStrange;
-    }
-
-    public static Double getModulusOfElasticity() {
-        return modulusOfElasticity;
-    }
-
-    public static void setModulusOfElasticity(Double modulusOfElasticity) {
-        ColComprWithBuckCalcUnit.modulusOfElasticity = modulusOfElasticity;
-    }
 }
