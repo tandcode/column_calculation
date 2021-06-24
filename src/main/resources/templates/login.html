@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="#{login.page-name}"></title>
+
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/css/all.css}" rel="stylesheet">
+    <link th:href="@{/css/login.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="form-signin text-center">
+        <div class="test-danger" th:if="${param.error}">
+            <span th:text="#{login.error}"></span>
+        </div>
+        <div class="test-primary" th:if="${param.logout}">
+            <span th:text="#{login.logout}"></span>
+        </div>
+        <form th:action="@{/login}" method="post">
+            <h1 class="h3 mb-3 fw-normal" th:text="#{login.invitation}"></h1>
+            <label for="inputUsername" class="visually-hidden">Username</label>
+            <input type="text" name="username" id="inputUsername" class="form-control" th:placeholder="#{login.username}" required>
+            <label for="inputPassword" class="visually-hidden">Password</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" th:placeholder="#{login.password}" required>
+            <input class="w-100 btn btn-lg btn-primary" type="submit" th:value="#{login.signin}">
+        </form>
+        <div class="p-2">
+            <span class="p-2" th:text="#{login.is-registered }"></span><a th:href="@{/registration}" th:text="#{login.signup}"></a>
+        </div>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+</body>
+</html>

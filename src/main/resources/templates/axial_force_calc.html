@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{axialForceCalc.title}">Title</title>
+
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/css/all.css}" rel="stylesheet">
+</head>
+<body>
+<!--  onload="checkResult();"-->
+<!--TODO:disable page overdoading while changing language-->
+    <div th:replace="fragments/header :: header"></div>
+    <main role="main">
+        <div class="container">
+            <h3 th:text="#{axialForceCalc.pageTitle}">Page title</h3>
+        </div>
+        <div class="row">
+
+        <div class="col mx-3">
+        <div class="container">
+            <h4 class="py-3" th:text="#{axialForceCalc.inputData}">Input data</h4>
+            <form th:method="POST" th:action="@{/axial-force-calculation}" th:object="${ccwbInput}">
+                <div class="row form-group">
+                    <label class="col-md-2 col-form-label" th:text="#{axialForceCalc.section}">Section</label>
+<!--TODO: Implement the interactive choosing a standard. (consider using react)-->
+                    <div class="col-md-6">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons" id="sectionType">
+                            <label class="btn btn-secondary active" for="I_BEAM" th:title="#{axialForceCalc.I_BEAM}">
+                            <input type="radio" class="btn-check" onclick="javascript:chooseStandard();" id="I_BEAM" value="I_BEAM" name="sectionType" autocomplete="off" checked>
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="i-beam" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="m 1,0 h 14 a 1 1 0 0 1 0 2 H 10.1 a 1.4 1.4 0 0 0 -1.4 1.4 v 9.2 a 1.4 1.4 0 0 0 1.4 1.4 H 15 a 1 1 0 0 1 0 2 H 1 a 1 1 0 0 1 0 -2 h 4.9 a 1.4 1.4 0 0 0 1.4 -1.4 V 3.4 a 1.4 1.4 0 0 0 -1.4 -1.4 H 1 a 1 1 0 0 1 0 -2 Z"/>
+                                </svg>
+                            </label>
+                            <label class="btn btn-secondary" for="WELDED_I_BEAM" th:title="#{axialForceCalc.WELDED_I_BEAM}">
+                            <input type="radio" class="btn-check" onclick="javascript:chooseStandard();" id="WELDED_I_BEAM" value="WELDED_I_BEAM" name="sectionType" autocomplete="off">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="welded-i-beam" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="16" height="2" x="0" y="0" ry="1" />
+                                    <rect width="16" height="2" x="0" y="14" ry="1" />
+                                    <rect width="1.4" height="8" x="7.3" y="4" ry="0.7" />
+                                </svg>
+                            </label>
+                            <label class="btn btn-secondary" for="U_PROFILE" th:title="#{axialForceCalc.U_PROFILE}">
+                            <input type="radio" class="btn-check" onclick="javascript:chooseStandard();" id="U_PROFILE" value="U_PROFILE" name="sectionType" autocomplete="off">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="u-profile" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="m 11.5,0 a 1 1 0 0 1 0 2 H 6.6 a 1.4 1.4 0 0 0 -1.4 1.4 v 9.2 a 1.4 1.4 0 0 0 1.4 1.4 h 4.9 a 1 1 0 0 1 0 2 H 3.8 V 0 Z"/>
+                                </svg>
+                            </label>
+                            <label class="btn btn-secondary" for="HOLLOW" th:title="#{axialForceCalc.HOLLOW}">
+                            <input type="radio" class="btn-check" onclick="javascript:chooseStandard();" id="HOLLOW" value="HOLLOW" name="sectionType" autocomplete="off">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="hollow-profile" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.25,0h11.51C14.99,0,16,1.01,16,2.25v11.51c0,1.24-1.01,2.25-2.25,2.25H2.25C1.01,16,0,14.99,0,13.75V3h1.5v10.75 c0,0.42,0.34,0.75,0.75,0.75h11.5c0.42,0,0.75-0.34,0.75-0.75V2.25c0-0.42-0.34-0.75-0.75-0.75H2.25C1.83,1.5,1.5,1.84,1.5,2.25V3H0 V2.25C0,1.01,1.01,0,2.25,0z"/>
+                                </svg>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="shaped_section_input">
+                    <div class="row form-group">
+                        <label for="sectionStandard" class="col-2 col-form-label"
+                               th:text="#{axialForceCalc.standard}">Standard</label>
+                        <div class="col-6">
+
+                            <select class="custom-select" id="sectionStandard" th:name="standard" th:field="*{sectionStandard}">
+                                <option id="gost8239-89" value="gost8239-89"
+                                        th:text="#{axialForceCalc.gost8239-89}">GOST 8239-89</option>
+                                <option id="gost19425-74-i-beam" value="gost19425-74-i-beam"
+                                        th:text="#{axialForceCalc.gost19425-74-i-beam}">GOST 19425-74*</option>
+                                <option id="gost8240-89p" value="gost8240-89-parallel-flange"
+                                        th:text="#{axialForceCalc.gost8240-89-parallel-flange}" style="display: none">GOST 8240-89(with parallel flange)</option>
+                                <option id="gost8240-89s" value="gost8240-89-slope-flange"
+                                        th:text="#{axialForceCalc.gost8240-89-slope-flange}" style="display: none">GOST 8240-89(with slope flange)</option>
+                                <option id="gost302245-94r" value="gost302245-94-rectangle"
+                                        th:text="#{axialForceCalc.gost302245-94-rectangle}" style="display: none">GOST 302245-94(rectangle profiles)</option>
+                                <option id="gost302245-94s" value="gost302245-94-square"
+                                        th:text="#{axialForceCalc.gost302245-94-square}" style="display: none">GOST 302245-94(square profiles)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="sectionNumber" class="col-2 col-form-label">#</label>
+                        <div class="col-6">
+
+                            <select class="custom-select" id="sectionNumber" th:name="sectionNumber" th:field="*{sectionNumber}">
+                                <option value="" th:text="#{axialForceCalc.chooseProfile}">Choose profile</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="welded_section_input" style="display: none">
+                    <div class="row form-group">
+                        <label class="col-2 col-form-label">Welded beam</label>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:placeholder="#{axialForceCalc.flangeWidth}"
+                                       th:field="*{flangeWidth}" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialForceCalc.mm}">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:placeholder="#{axialForceCalc.flangeThickness}"
+                                       th:field="*{flangeThickness}" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialForceCalc.mm}">mm</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:placeholder="#{axialForceCalc.webDepth}"
+                                       th:field="*{webDepth}" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialForceCalc.mm}">mm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:placeholder="#{axialForceCalc.webThickness}"
+                                       th:field="*{webThickness}" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialForceCalc.mm}">mm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <label for="length" class="col-2 col-form-label">l</label>
+                    <div class="input-group col-6"
+                         th:classappend="${#fields.hasErrors('length')} ? 'is-invalid'">
+                        <input type="text" class="form-control" id="length" th:placeholder="#{axialForceCalc.memberLength}"
+                               th:field="*{length}" aria-describedby="lengthValidation"
+                               th:classappend="${#fields.hasErrors('length')} ? 'is-invalid'"/>
+                        <div class="input-group-append">
+                            <span class="input-group-text" th:text="#{axialForceCalc.m}">m</span>
+                        </div>
+                        <div class="invalid-feedback" id="lengthValidation">
+                            <span th:each="err : ${#fields.errors('length')}" th:text="#{${err}}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group"
+                     th:classappend="${#fields.hasErrors('estimatedLengthFactor')} ? 'is-invalid'">
+                    <label for="mu" class="col-2 col-form-label">&#956;</label>
+                    <div class="col-6">
+                        <input type="text" class="form-control" id="mu" th:placeholder="#{axialForceCalc.estimatedLengthFac}"
+                               th:field="*{estimatedLengthFactor}" aria-describedby="estimatedLengthFactorValidation"
+                               th:classappend="${#fields.hasErrors('estimatedLengthFactor')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" id="estimatedLengthFactorValidation">
+                            <span th:each="err : ${#fields.errors('estimatedLengthFactor')}" th:text="#{${err}}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="gammaC" class="col-2 col-form-label">&#947;<sub>c</sub></label>
+                    <div class="col-6">
+                        <input type="text" class="form-control" id="gammaC" th:placeholder="#{axialForceCalc.workingConditFac}"
+                               th:field="*{workingConditionsFactor}" aria-describedby="workingConditionsFactorValidation"
+                               th:classappend="${#fields.hasErrors('workingConditionsFactor')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" id="workingConditionsFactorValidation">
+                            <span th:each="err : ${#fields.errors('workingConditionsFactor')}" th:text="#{${err}}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group"
+                     th:classappend="${#fields.hasErrors('reliabilityFactorForResponsibility')} ? 'is-invalid'">
+                    <label for="gammaN" class="col-2 col-form-label">&#947;<sub>n</sub></label>
+                    <div class="col-6">
+                        <input type="text" class="form-control" id="gammaN" th:placeholder="#{axialForceCalc.reliabilityFacResp}"
+                               th:field="*{reliabilityFactorForResponsibility}" aria-describedby="reliabilityFactorForResponsibilityValidation"
+                               th:classappend="${#fields.hasErrors('reliabilityFactorForResponsibility')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" id="reliabilityFactorForResponsibilityValidation">
+                            <span th:each="err : ${#fields.errors('reliabilityFactorForResponsibility')}" th:text="#{${err}}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="steel" class="col-2 col-form-label" th:text="#{axialForceCalc.steel}">Steel</label>
+                    <div class="col-6">
+                        <select class="custom-select" id="steel" th:field="*{steel}">
+                            <option th:value="S235" th:text="#{axialForceCalc.S235}">C235</option>
+                            <option th:value="S245" th:text="#{axialForceCalc.S245}">C245</option>
+                            <option th:value="S255" th:text="#{axialForceCalc.S255}">C255</option>
+                            <option th:value="S275" th:text="#{axialForceCalc.S275}">C275</option>
+                            <option th:value="S345" th:text="#{axialForceCalc.S345}">C345</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-2 col-form-label" th:text="#{axialForceCalc.loads}">Loads</label>
+                    <div class="col-6">
+                        <div class="row">
+                            <label for="moment" class="col-1 col-form-label">M</label>
+                            <div class="input-group col">
+                                <input type="text" class="form-control" id="moment"  th:placeholder="#{axialForceCalc.moment}"
+                                       th:field="*{moment}" disabled/>
+                                <div class="input-group-append">
+                                    <span class="input-group-text"  th:text="#{axialForceCalc.tM}">t*m</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="normalForce" class="col-1 col-form-label">N</label>
+                            <div class="input-group col"
+                                 th:classappend="${#fields.hasErrors('normalForce')} ? 'is-invalid'">
+                                <input type="text" class="form-control" id="normalForce" th:placeholder="#{axialForceCalc.normalForse}"
+                                       th:field="*{normalForce}" aria-describedby="normalForceValidation"
+                                       th:classappend="${#fields.hasErrors('normalForce')} ? 'is-invalid'"/>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialForceCalc.t}">t</span>
+                                </div>
+                                <div class="invalid-feedback" id="normalForceValidation">
+                                    <span th:each="err : ${#fields.errors('normalForce')}" th:text="#{${err}}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="transverseForce" class="col-1 col-form-label">Q</label>
+                            <div class="input-group col">
+                                <input type="text" class="form-control" id="transverseForce"
+                                       th:placeholder="#{axialForceCalc.transverseForse}" th:field="*{traverseForce}" disabled/>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" th:text="#{axialForceCalc.t}">t</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="col-1 custom-control-input" id="includesOwnWeight"
+                                       th:field="*{ownWeightIncluded}" />
+                                <label class="col custom-control-label" for="includesOwnWeight" th:text="#{axialForceCalc.includeOwnWeight}">Include own weight</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <input class="btn btn-primary" type="submit" th:value="#{axialForceCalc.calculate}" />
+                </div>
+            </form>
+            <form th:method="POST" th:action="@{/axial-force-calculation/save}">
+                <input type="hidden" name="ccwbInputId" th:value="${ccwbInput.id}">
+                <input class="btn btn-success" type="submit" th:value="#{axialForceCalc.save}" />
+            </form>
+        </div>
+        </div>
+        <div class="col mx-3">
+            <th:block th:if="${result != null}">
+                <div th:insert="result :: resultBlock">
+                </div>
+            </th:block>
+        </div>
+        </div>
+    </main>
+    <!-- Optional JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+<!--    TODO:remove this hardcode-->
+
+    <script th:inline="javascript" type="text/javascript">
+        window.addEventListener("load", init);
+
+        let standardDdl = document.getElementById("sectionStandard");
+        let weldedInputBlock = document.getElementById("welded_section_input");
+        let shapedInputBlock = document.getElementById("shaped_section_input");
+        let gost8239_89 = document.getElementById("gost8239-89");
+        let gost19425_74IBeam = document.getElementById("gost19425-74-i-beam");
+        let gost8240_89p = document.getElementById("gost8240-89p");
+        let gost8240_89s = document.getElementById("gost8240-89s");
+        let gost302245_94r = document.getElementById("gost302245-94r");
+        let gost302245_94s = document.getElementById("gost302245-94s");
+        let profilesByStandard = [[${sections}]];
+        let sectionCheck = document.getElementById("sectionType");
+        let profilesDdl = document.getElementById("sectionNumber");
+        let input = [[${ccwbInput}]];
+
+        function chooseStandard() {
+
+            switch ($("input[type='radio'][name='sectionType']:checked").val()) {
+                case "I_BEAM":
+                    standardDdl.value=gost8239_89.value;
+                    gost8239_89.style.display = "block";
+                    gost19425_74IBeam.style.display = "block";
+                    gost8240_89p.style.display = "none";
+                    gost8240_89s.style.display = "none";
+                    gost302245_94r.style.display = "none";
+                    gost302245_94s.style.display = "none";
+                    weldedInputBlock.style.display = "none";
+                    shapedInputBlock.style.display = "block";
+                    break;
+                case "U_PROFILE":
+                    standardDdl.value=gost8240_89p.value;
+                    gost8239_89.style.display = "none";
+                    gost19425_74IBeam.style.display = "none";
+                    gost8240_89p.style.display = "block";
+                    gost8240_89s.style.display = "block";
+                    gost302245_94r.style.display = "none";
+                    gost302245_94s.style.display = "none";
+                    weldedInputBlock.style.display = "none";
+                    shapedInputBlock.style.display = "block";
+                    break;
+                case "HOLLOW":
+                    standardDdl.value=gost302245_94r.value;
+                    gost8239_89.style.display = "none";
+                    gost19425_74IBeam.style.display = "none";
+                    gost8240_89p.style.display = "none";
+                    gost8240_89s.style.display = "none";
+                    gost302245_94r.style.display = "block";
+                    gost302245_94s.style.display = "block";
+                    weldedInputBlock.style.display = "none";
+                    shapedInputBlock.style.display = "block";
+                    break;
+                case "WELDED_I_BEAM":
+                    weldedInputBlock.style.display = "block";
+                    shapedInputBlock.style.display = "none";
+            }
+            setOptions(profilesDdl, profilesByStandard[standardDdl.value]);
+        }
+
+        function init() {
+            setOptions(profilesDdl, profilesByStandard[standardDdl.value]);
+            if(input.sectionType !== null) $('#' + input.sectionType).click();
+            standardDdl.addEventListener('change', function () {
+                setOptions(profilesDdl, profilesByStandard[standardDdl.value]);
+            });
+            sectionCheck.addEventListener('change', function () {
+                setOptions(profilesDdl, profilesByStandard[standardDdl.value]);
+            });
+        }
+
+        function setOptions(dropDown, options) {
+            dropDown.innerHTML = '';
+            options.forEach(function(value) {
+                let opt = document.createElement('option');
+                opt.value = value;
+                opt.textContent = value;
+                const sectionNumber = [[${ccwbInput.sectionNumber}]];
+                if(sectionNumber === value) {
+                    opt.selected = true;
+                }
+                dropDown.appendChild(opt);
+            });
+        }
+    </script>
+</body>
+</html>

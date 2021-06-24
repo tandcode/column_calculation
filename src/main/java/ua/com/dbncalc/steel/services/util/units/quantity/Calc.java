@@ -28,4 +28,23 @@ public abstract class Calc {
         unit = unit.root(2);
         return Quantities.getQuantity(value, unit);
     }
+
+    public static <Q extends Quantity<Q>> ComparableQuantity<Q> abs(Quantity<Q> quantity) {
+        Objects.requireNonNull(quantity);
+
+        Number value = quantity.getValue();
+        value = Math.abs(value.doubleValue());
+        Unit<Q> unit = quantity.getUnit();
+        return Quantities.getQuantity(value, unit);
+    }
+
+    public static <Q extends Quantity<Q>> ComparableQuantity<Q> round(Quantity<Q> quantity, int places) {
+        Objects.requireNonNull(quantity);
+
+        Number value = quantity.getValue();
+        double scale = Math.pow(10, places);
+        value = Math.round(value.doubleValue() * scale) / scale;
+        Unit<Q> unit = quantity.getUnit();
+        return Quantities.getQuantity(value, unit);
+    }
 }

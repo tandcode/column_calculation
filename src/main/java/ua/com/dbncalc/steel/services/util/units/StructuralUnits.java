@@ -59,16 +59,6 @@ public class StructuralUnits extends AbstractSystemOfUnits {
     public static final Unit<Density> KILOGRAM_PER_CUBIC_METRE = addUnit(KILOGRAM.divide(METRE.pow(3)).asType(Density.class));
     public static final Unit<Density> TONNE_PER_CUBIC_METRE = addUnit(TONNE.divide(METRE.pow(3)).asType(Density.class));
 
-    static {
-//        SimpleUnitFormat.getInstance().label(TON_FORCE, "tf");
-//        SimpleUnitFormat.getInstance().label(TON_FORCE_PER_SQUARE_METER, "tf/m²");
-//        SimpleUnitFormat.getInstance().label(KILONEWTON_METRE, "kN·m");
-//        SimpleUnitFormat.getInstance().label(TON_FORCE_METRE, "tf·m");
-//        SimpleUnitFormat.getInstance().label(CENTIMETRE_TO_THE_FOURTH, "cm⁴");
-//        SimpleUnitFormat.getInstance().label(CENTIMETRE_TO_THE_THIRD, "cm³");
-//        SimpleUnitFormat.getInstance().label(TONNE_PER_CUBIC_METRE, "kg/m³");
-//        SimpleUnitFormat.getInstance().label(TONNE_PER_CUBIC_METRE, "t/m³");
-    }
     /**
      * Adds a new unit not mapped to any specified quantity type.
      *
@@ -158,32 +148,4 @@ public class StructuralUnits extends AbstractSystemOfUnits {
         return SYSTEM_NAME;
     }
 
-    public static void main(String[] args) {
-        Quantity<Force> forceTon = Quantities.getQuantity(1, TON_FORCE);
-        Quantity<Force> newton = forceTon.to(KILONEWTON);
-
-        Quantity<Pressure> forceTonByM2 = Quantities.getQuantity(1, TON_FORCE_PER_SQUARE_METER);
-        Quantity<Pressure> kilopascal = forceTonByM2.to(KILOPASCAL);
-
-        Quantity<Length> metre = Quantities.getQuantity(1.0, METRE);
-        Quantity<Length> cmmetre = metre.to(CENTIMETRE);
-        Quantity<Length> mmmetre = cmmetre.to(MILLIMETRE);
-
-        Quantity<Moment> kNewtonM = Quantities.getQuantity(1.0, KILONEWTON_METRE);
-        Quantity<Moment> tfM = kNewtonM.to(TON_FORCE_METRE);
-
-        System.out.println(forceTon);
-        System.out.println(newton);
-
-        System.out.println(forceTonByM2);
-        System.out.println(kilopascal);
-
-        System.out.println(metre);
-        System.out.println(cmmetre);
-        System.out.println(mmmetre);
-
-        System.out.println(kNewtonM);
-        System.out.println(tfM);
-
-    }
 }

@@ -8,18 +8,44 @@
 <body>
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm"
     th:fragment="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<!--            <a sec:authorize="hasAuthority('USER')" class="p-2 text-dark"-->
+<!--               th:text="#{header.myCalculations}" th:href="@{/my-calculations}">My calculations</a>-->
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/}" th:text="#{header.main}">Main <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown" sec:authorize="hasAuthority('USER')">
+                    <a class="nav-link dropdown-toggle" href="#" id="calcListTypeDdl" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false"
+                       th:text="#{header.myCalculations}">My calculations</a>
+                    <div class="dropdown-menu" aria-labelledby="calcListTypeDdl">
+                        <a class="dropdown-item" th:href="@{/my-calculations/saved}" th:text="#{myCalculations.saved}">Saved</a>
+                        <a class="dropdown-item" th:href="@{/my-calculations/recent}" th:text="#{myCalculations.recent}">Saved</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown" sec:authorize="hasAuthority('USER')" >
+                    <a class="nav-link dropdown-toggle" href="#" id="calcTypeDdl" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false" th:text="#{header.calculations}">Calculations</a>
+                    <div class="dropdown-menu" aria-labelledby="calcTypeDdl">
+                        <a class="dropdown-item" th:href="@{/axial-force-calculation}" th:text="#{header.axialCompTens}">Axial comperession/tension</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
 
         <span class="p-2 border">
 <!--            TODO: do not clear the page while changing language-->
                 <a class="p-2 text-dark" th:href="@{'?lang=en'}" th:text="#{lang.en}"></a>
                 <a class="p-2 text-dark" th:href="@{'?lang=ua'}" th:text="#{lang.ua}"></a>
         </span>
-<!--        <div sec:authorize="isAuthenticated()">-->
-<!--            <a class="btn btn-outline-primary" th:href="@{/logout}" th:text="#{login.signout}"></a>-->
-<!--        </div>-->
-<!--        <div sec:authorize="!isFullyAuthenticated()">-->
-<!--            <a class="btn btn-outline-primary" th:href="@{/login}" th:text="#{login.signin}"></a>-->
-<!--        </div>-->
+        <div sec:authorize="isAuthenticated()">
+            <a class="btn btn-outline-primary" th:href="@{/logout}" th:text="#{login.signout}"></a>
+        </div>
+        <div sec:authorize="!isFullyAuthenticated()">
+            <a class="btn btn-outline-primary" th:href="@{/login}" th:text="#{login.signin}"></a>
+        </div>
     </div>
 </body>
 </html>

@@ -1,12 +1,13 @@
 package ua.com.dbncalc.steel.services.util;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import tech.units.indriya.ComparableQuantity;
 import tech.units.indriya.quantity.Quantities;
-import ua.com.dbncalc.steel.dto.ColComprWithBuckDto;
+import ua.com.dbncalc.steel.models.CCWBInput;
 import ua.com.dbncalc.steel.models.sections.Section;
 import ua.com.dbncalc.steel.models.sections.builder.SectionWithUnitsBuilder;
 import ua.com.dbncalc.steel.models.sections.builder.WeldedIBeamSectionWithUnitsBuilder;
@@ -14,7 +15,6 @@ import ua.com.dbncalc.steel.models.sections.with_units.SectionWithUnits;
 import ua.com.dbncalc.steel.models.steels.Steel;
 import ua.com.dbncalc.steel.repositories.SectionRepository;
 import ua.com.dbncalc.steel.repositories.SteelRepository;
-import ua.com.dbncalc.steel.services.Table8_1Entity;
 import ua.com.dbncalc.steel.services.util.units.quantity.*;
 
 import javax.measure.Quantity;
@@ -28,12 +28,11 @@ import static ua.com.dbncalc.steel.services.util.units.StructuralUnits.*;
 @NoArgsConstructor
 @Getter
 @Setter
-//@Component
-public class ColComprWithBuckCalcUnit {
+public class CCWBCalculationWorker {
 
     public static final ComparableQuantity<Density> steelDensity = Quantities.getQuantity(7850, KILOGRAM_PER_CUBIC_METRE);
 
-    private ColComprWithBuckDto input;
+    private CCWBInput input;
     // TODO: 03.05.2021 change to section
     private SectionWithUnits section;
 
@@ -89,28 +88,33 @@ public class ColComprWithBuckCalcUnit {
     //steel modulus of elasticity (E)
     private static Quantity<Pressure> modulusOfElasticity = Quantities.getQuantity(2.06e5, MEGAPASCAL);
 
-    public void calculate(ColComprWithBuckDto input) {
+    public void calculate(CCWBInput input) {
         loadInput(input);
         loadSteelData();
         loadSectionData();
-        calculateEffectiveLengthY();
-        calculateSlendernessY();
-        calculateNonDimSlendernessY();
-        calculateDeltaModulusY();
-        calculateBucklingModulusY();
+        if(input.getNormalForce() > 0) {
+            bucklingModulusY = Quantities.getQuantity(1, ONE);
+        }
+        else {
+            calculateEffectiveLengthY();
+            calculateSlendernessY();
+            calculateNonDimSlendernessY();
+            calculateDeltaModulusY();
+            calculateBucklingModulusY();
+        }
         calculateColComprWithBuckModulusY();
     }
 
     // TODO: 29.05.2021 implement chosing unit at front
-    private void loadInput(ColComprWithBuckDto input) {
+    private void loadInput(CCWBInput input) {
         this.input = input;
         length = Quantities.getQuantity(input.getLength(), METRE);
         estimatedLengthFactor = Quantities.getQuantity(input.getEstimatedLengthFactor(), ONE);
         workingConditionsFactor = Quantities.getQuantity(input.getWorkingConditionsFactor(), ONE);
         reliabilityFactorForResponsibility = Quantities.getQuantity(input.getReliabilityFactorForResponsibility(), ONE);
-        moment = Quantities.getQuantity(input.getMoment(), TON_FORCE_METRE);
+//        moment = Quantities.getQuantity(input.getMoment(), TON_FORCE_METRE);
         normalForce = Quantities.getQuantity(input.getNormalForce(), TON_FORCE);
-        traverseForce = Quantities.getQuantity(input.getTraverseForce(), TON_FORCE);
+//        traverseForce = Quantities.getQuantity(input.getTraverseForce(), TON_FORCE);
     }
 
     private enum TypeOfSlenderCurve{
@@ -302,11 +306,18 @@ public class ColComprWithBuckCalcUnit {
     // TODO : implement second axis Z
     private void calculateColComprWithBuckModulusY(){
         normalForceWithOwnWeight = input.getOwnWeightIncluded()
-                ? normalForce.add(section.getWeightPerLength().multiply(length).multiply(STANDARD_GRAVITY).asType(Force.class))
-                : normalForce;
-        colComprWithBuckModulusY = (ComparableQuantity<Dimensionless>) normalForceWithOwnWeight.multiply(reliabilityFactorForResponsibility)
+                ? Calc.abs(normalForce).add(section.getWeightPerLength().multiply(length).multiply(STANDARD_GRAVITY).asType(Force.class))
+                : Calc.abs(normalForce);
+        colComprWithBuckModulusY = (ComparableQuantity<Dimensionless>) Calc.round(normalForceWithOwnWeight.multiply(reliabilityFactorForResponsibility)
                 .divide(bucklingModulusY.multiply(section.getArea()).multiply(designYieldStrange)
-                .multiply(workingConditionsFactor)).toSystemUnit();
+                        .multiply(workingConditionsFactor)).toSystemUnit(), 3);
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class Table8_1Entity {
+        private Double alpha;
+        private Double beta;
+    }
 }
