@@ -34,7 +34,7 @@ public class CCWBCalculationService {
     }
 
     public CCWBCalculation createCalculation(CCWBCalculationWorker ccwbCalculationWorker, User user) {
-        List<CCWBCalculation> tenRecentCalculations = ccwbCalculationRepository.findTop10ByOrderByCreationDateTime();
+        List<CCWBCalculation> tenRecentCalculations = ccwbCalculationRepository.findTop10ByUserOrderByCreationDateTime(user);
         if(tenRecentCalculations.size() == 10){
             Optional<CCWBCalculation> oldestUnsavedCalc = Optional.ofNullable(tenRecentCalculations.stream()
                     .filter(ccwbCalculation -> !ccwbCalculation.getInput().getIsSaved())

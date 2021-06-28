@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="#{user-list.page-name}"></title>
+
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/css/all.css}" rel="stylesheet">
+    <link th:href="@{/css/user-edit.css}" rel="stylesheet">
+    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="user-form text-center">
+        <form th:action="@{/user}" th:object="${user}" method="post">
+            <h1 class="h3 mb-3 fw-normal" th:text="#{user-edit.editor}"></h1>
+            <input type="hidden" name="userId" th:value="*{id}">
+            <label for="inputUsername" class="visually-hidden">Username</label>
+            <input type="text" name="username" th:value="*{username}"
+                   id="inputUsername" class="form-control" th:placeholder="#{login.username}" required>
+            <label for="inputEmail" class="visually-hidden">Username</label>
+            <input type="email" name="email" th:value="*{email}"
+                   id="inputEmail" class="form-control" th:placeholder="#{login.email}" required>
+
+            <div >
+<!--                th:if="${!#sets.contains(user.roles, T(ua.com.dbncalc.steel.models.Role).ADMIN)}"-->
+                <input id="manager" class="btn-check" type ="checkbox" name="manager"
+                              th:checked="${#sets.contains(user.roles, T(ua.com.dbncalc.steel.models.Role).ADMIN)}">
+                <label class="w-100 mb-2 btn btn-outline-warning" for="manager" th:text="#{user-edit.admin}">Admin</label>
+
+                <input id="active" class="btn-check" type ="checkbox" name="active"
+                       th:checked="*{active}">
+                <label class="w-100 mb-2 btn btn-outline-success" for="active" th:text="#{user-edit.is-active}">Active</label>
+            </div>
+
+            <input class="w-100 btn btn-lg btn-primary" type="submit" th:value="#{user-edit.change}">
+        </form>
+
+</div>
+</body>
+</html>

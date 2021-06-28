@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface CCWBCalculationRepository extends JpaRepository<CCWBCalculation, Long> {
     List<CCWBCalculation> findByUser(User user);
     List<CCWBCalculation> findByUserAndInput_IsSaved(User user, Boolean isSaved);
-    List<CCWBCalculation> findTop10ByOrderByCreationDateTime();
+    List<CCWBCalculation> findTop10ByUserOrderByCreationDateTime(User user);
 
     Optional<CCWBCalculation> findByInput(CCWBInput input);
 }
