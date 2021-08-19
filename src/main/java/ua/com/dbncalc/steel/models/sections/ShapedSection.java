@@ -1,7 +1,9 @@
 package ua.com.dbncalc.steel.models.sections;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
@@ -9,6 +11,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+
+@SuperBuilder
+@AllArgsConstructor
 public class ShapedSection extends Section{
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

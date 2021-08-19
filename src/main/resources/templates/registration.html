@@ -15,20 +15,46 @@
 <div th:replace="fragments/header :: header"></div>
 
 <main class="form-signin text-center">
-    <form th:action="@{/registration}" method="post">
+    <form th:action="@{/registration}" th:method="post" th:object="${user}">
         <h1 class="h3 mb-3 fw-normal" th:text="#{registration.invitation}"></h1>
-        <span th:text="${message}"></span>
-        <label for="username" class="visually-hidden">Username</label>
-        <input type="text" name="username" id="username"
-               class="form-control" th:placeholder="#{login.username}" required>
-<!--        <span th:if="${#fields.hasErrors('username')}" th:errors="username" class="text-danger"></span>-->
-        <label for="password" class="visually-hidden">Password</label>
-        <input type="password" name="password" id="password"
-               class="form-control" th:placeholder="#{login.password}" required>
-<!--        <span th:if="${#fields.hasErrors('password')}" th:errors="password" class="text-danger"></span>-->
-        <label for="email" class="visually-hidden">Email</label>
-        <input type="email" name="email" id="email" class="form-control" th:placeholder="#{login.email}" required>
-<!--        <span th:if="${#fields.hasErrors('email')}" th:errors="email" class="text-danger"></span>-->
+        <div>
+            <label for="username" class="visually-hidden">Username</label>
+            <input type="text" id="username" name="username" th:field="*{username}"
+                   aria-describedby="usernameValidation"
+                   th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
+                   class="form-control" th:placeholder="#{login.username}" required>
+            <div class="invalid-feedback" id="usernameValidation">
+                <span th:each="err : ${#fields.errors('username')}" th:text="#{${err}}"></span>
+            </div>
+        </div>
+        <div>
+            <label for="password" class="visually-hidden">Password</label>
+            <input type="password" id="password" name="password" th:field="*{password}"
+                   aria-describedby="passwordValidation"
+                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                   class="form-control" th:placeholder="#{login.password}" required>
+            <div class="invalid-feedback" id="passwordValidation">
+                <span th:each="err : ${#fields.errors('password')}" th:text="#{${err}}"></span>
+            </div>
+        </div>
+        <div>
+            <label for="matchingPassword" class="visually-hidden">Repeat password</label>
+            <input type="password" id="matchingPassword" name="matchingPassword" th:field="*{matchingPassword}"
+                   aria-describedby="matchingPasswordValidation" th:classappend="${#fields.hasGlobalErrors()} ? 'is-invalid'"
+                   class="form-control" th:placeholder="#{login.matchingPassword}" required>
+            <div class="invalid-feedback" id="matchingPasswordValidation">
+                <span th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}" th:text="#{${err}}"></span>
+            </div>
+        </div>
+        <div>
+            <label for="email" class="visually-hidden">Email</label>
+            <input type="text" id="email" name="email" th:field="*{email}" class="form-control"
+                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                   aria-describedby="emailValidation" th:placeholder="#{login.email}" required>
+            <div class="invalid-feedback" id="emailValidation">
+                <span th:each="err : ${#fields.errors('email')}" th:text="#{${err}}"></span>
+            </div>
+        </div>
         <input class="w-100 btn btn-lg btn-primary" type="submit" th:value="#{login.signup}">
     </form>
 </main>

@@ -25,9 +25,6 @@ public class UProfileSectionWithUnits extends ShapedSectionWithUnits {
     //inside radius (r1) in mm
     private Quantity<Length> insideRadius;
 
-    //outside radius (r2) in mm
-    private Quantity<Length> outsideRadius;
-
     //section first moment about Y axis (Sy) in sm^3
     private Quantity<Volume> firstMomentAboutYAxis;
 
@@ -51,7 +48,6 @@ public class UProfileSectionWithUnits extends ShapedSectionWithUnits {
                                     Unit<Length> webThickUnit,
                                     Unit<Length> flangeThickUnit,
                                     Unit<Length> insideRadiusUnit,
-                                    Unit<Length> outsideRadiusUnit,
                                     Unit<Volume> firstMomentAboutYAxisUnit,
                                     Unit<Length> centerOfTheWeightUnit) {
         super(uProfileSection,
@@ -68,7 +64,6 @@ public class UProfileSectionWithUnits extends ShapedSectionWithUnits {
         this.webThick = Quantities.getQuantity(uProfileSection.getWebThick(), webThickUnit);
         this.flangeThick = Quantities.getQuantity(uProfileSection.getFlangeThick(), flangeThickUnit);
         this.insideRadius = Quantities.getQuantity(uProfileSection.getInsideRadius(), insideRadiusUnit);
-        this.outsideRadius = Quantities.getQuantity(uProfileSection.getOutsideRadius(), outsideRadiusUnit);
         this.firstMomentAboutYAxis = Quantities.getQuantity(uProfileSection.getFirstMomentAboutYAxis(), firstMomentAboutYAxisUnit);
         this.centerOfTheWeight = Quantities.getQuantity(uProfileSection.getCenterOfTheWeight(), centerOfTheWeightUnit);
     }

@@ -9,6 +9,7 @@ import ua.com.dbncalc.steel.models.User;
 import ua.com.dbncalc.steel.repositories.CCWBCalculationRepository;
 import ua.com.dbncalc.steel.repositories.CCWBInputRepository;
 import ua.com.dbncalc.steel.repositories.CCWBResultRepository;
+import ua.com.dbncalc.steel.services.exceptions.SteelDoesntExistsException;
 import ua.com.dbncalc.steel.services.util.CCWBCalculationWorker;
 
 import java.util.List;
@@ -28,37 +29,21 @@ public class CCWBCalculationService {
     @Autowired
     CCWBResultRepository ccwbResultRepository;
 
-    public CCWBCalculationWorker calculate(CCWBInput input){
-        ccwbCalculationWorker.calculate(input);
-        return ccwbCalculationWorker;
-    }
-
-    public CCWBCalculation createCalculation(CCWBCalculationWorker ccwbCalculationWorker, User user) {
-        List<CCWBCalculation> tenRecentCalculations = ccwbCalculationRepository.findTop10ByUserOrderByCreationDateTime(user);
+    public CCWBCalculation createCalculation(CCWBInput input, User user) throws SteelDoesntExistsException {
+        CCWBCalculation ccwbCalculation = ccwbCalculationWorker.calculate(input, user);
+        List<CCWBCalculation> tenRecentCalculations = ccwbCalculationRepository
+                .findTop10ByUserOrderByCreationDateTime(user);
         if(tenRecentCalculations.size() == 10){
-            Optional<CCWBCalculation> oldestUnsavedCalc = Optional.ofNullable(tenRecentCalculations.stream()
-                    .filter(ccwbCalculation -> !ccwbCalculation.getInput().getIsSaved())
-                    .findFirst()
-                    .orElse(null));
-            if(oldestUnsavedCalc.isPresent()) ccwbCalculationRepository.deleteById(oldestUnsavedCalc.get().getId());
+            Optional<CCWBCalculation> oldestUnsavedCalc = tenRecentCalculations.stream()
+                    .filter(ccwbCalc -> !ccwbCalc.getInput().getIsSaved())
+                    .findFirst();
+            oldestUnsavedCalc.ifPresent(ccwbCalc -> ccwbCalculationRepository.deleteById(ccwbCalc.getId()));
         }
 
-        return ccwbCalculationRepository.save(
-                CCWBCalculation.builder()
-                .input(ccwbInputRepository.save(ccwbCalculationWorker.getInput()))
-                .result(ccwbResultRepository.save(
-                        CCWBResult.builder()
-                        .axialComressionRes(ccwbCalculationWorker.getColComprWithBuckModulusY()
-                                .getValue().doubleValue())
-                        .build()
-                        )
-                )
-                .user(user)
-                .build()
-        );
+        return ccwbCalculationRepository.save(ccwbCalculation);
     }
 
-    public CCWBCalculation saveCalculation(CCWBInput input) {
+    public CCWBCalculation saveCalculationToSaved(CCWBInput input) {
         input.setIsSaved(true);
         ccwbInputRepository.save(input);
         return ccwbCalculationRepository.findByInput(input).orElseThrow();

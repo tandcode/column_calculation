@@ -14,7 +14,7 @@ public class WeldedIBeamSectionWithUnits extends SectionWithUnits {
 
     //welded beam sheets in mm
     private Quantity<Length> flangeWidth;
-    private Quantity<Length> flangeThickness;
+    private Quantity<Length> flangeThick;
     private Quantity<Length> webDepth;
-    private Quantity<Length> webThickness;
+    private Quantity<Length> webThick;
 }

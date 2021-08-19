@@ -1,19 +1,19 @@
 package ua.com.dbncalc.steel.models.sections;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import ua.com.dbncalc.steel.services.util.units.quantity.RadiusOfGyration;
-import ua.com.dbncalc.steel.services.util.units.quantity.SecondMoment;
-import ua.com.dbncalc.steel.services.util.units.quantity.SectionModulus;
-import ua.com.dbncalc.steel.services.util.units.quantity.WeightPerLength;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Area;
-import javax.measure.quantity.Length;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 @Data
 @MappedSuperclass
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Section {
     //section depth (h) in mm
     private Double depth;

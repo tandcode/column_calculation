@@ -5,8 +5,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Set;
 
@@ -15,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 
 @Entity
 @Table(name = "usr")
@@ -23,11 +22,8 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(unique = true)
-    @NotBlank(message="Username is required")
     private String username;
-    @Email(message="Email is required")
     private String email;
-    @NotBlank(message="Password is required")
     private String password;
     private boolean active;
 
@@ -36,6 +32,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "user")
     Collection<CCWBCalculation> calculations;
 
@@ -62,16 +59,5 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", active=" + active +
-                ", roles=" + roles +
-                '}';
     }
 }

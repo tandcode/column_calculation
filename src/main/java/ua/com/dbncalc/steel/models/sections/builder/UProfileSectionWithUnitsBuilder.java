@@ -40,8 +40,6 @@ public final class UProfileSectionWithUnitsBuilder {
     private Quantity<Length> flangeThick;
     //inside radius (r1) in mm
     private Quantity<Length> insideRadius;
-    //outside radius (r2) in mm
-    private Quantity<Length> outsideRadius;
     //section first moment about Y axis (Sy) in sm^3
     private Quantity<Volume> firstMomentAboutYAxis;
     //section length to center of the weight (y0) in mm
@@ -134,11 +132,6 @@ public final class UProfileSectionWithUnitsBuilder {
         return this;
     }
 
-    public UProfileSectionWithUnitsBuilder withOutsideRadius(Quantity<Length> outsideRadius) {
-        this.outsideRadius = outsideRadius;
-        return this;
-    }
-
     public UProfileSectionWithUnitsBuilder withFirstMomentAboutYAxis(Quantity<Volume> firstMomentAboutYAxis) {
         this.firstMomentAboutYAxis = firstMomentAboutYAxis;
         return this;
@@ -167,7 +160,6 @@ public final class UProfileSectionWithUnitsBuilder {
         uProfileSectionWithUnits.setWebThick(webThick);
         uProfileSectionWithUnits.setFlangeThick(flangeThick);
         uProfileSectionWithUnits.setInsideRadius(insideRadius);
-        uProfileSectionWithUnits.setOutsideRadius(outsideRadius);
         uProfileSectionWithUnits.setFirstMomentAboutYAxis(firstMomentAboutYAxis);
         uProfileSectionWithUnits.setCenterOfTheWeight(centerOfTheWeight);
         return uProfileSectionWithUnits;

@@ -19,5 +19,8 @@ public class CCWBResult {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Double axialComressionRes;
+    private Double axialComressionYRes;
+
+    private Double axialComressionZRes;
+
 }

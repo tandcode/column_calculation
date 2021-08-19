@@ -20,10 +20,10 @@ public class CCWBCalculation implements Calculation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     CCWBInput input;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     CCWBResult result;
 
     @ManyToOne

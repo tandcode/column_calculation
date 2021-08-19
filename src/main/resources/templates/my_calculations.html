@@ -11,39 +11,43 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 <main role="main">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col" th:text="'l, '+#{axialForceCalc.m}">Length</th>
-            <th scope="col" th:text="#{axialForceCalc.section}">Section</th>
-            <th scope="col">&#956;</th>
-            <th scope="col">&#947;<sub>c</sub></th>
-            <th scope="col">&#947;<sub>n</sub></th>
-            <th scope="col" th:text="#{axialForceCalc.steel}">Steel</th>
-            <th scope="col" th:text="'N, ' + #{axialForceCalc.t}">Normal force</th>
-            <th scope="col" th:text="#{myCalculations.ownWeightIncluded}">Own weight included</th>
-            <th scope="col" th:text="#{myCalculations.sectionUsage}">Section usage</th>
-            <th scope="col" th:text="#{myCalculations.date}">Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="calc : ${calculations}">
-            <td th:text="${calc.input.length}">Length</td>
-            <td th:text="#{'axialForceCalc.' + ${calc.input.sectionType}} + ', ' + (${calc.input.sectionType} == 'WELDED_I_BEAM' ?
-            #{myCalculations.flange} + ': ' + ${calc.input.flangeWidth} + 'x' + ${calc.input.flangeThickness} + ', ' +
-            #{myCalculations.web} + ': ' + ${calc.input.webDepth} + 'x' + ${calc.input.webThickness} :
-            #{'axialForceCalc.' + ${calc.input.sectionStandard}} + ' ,# ' + ${calc.input.sectionNumber})">Section</td>
-            <td th:text="${calc.input.estimatedLengthFactor}">Estimated length</td>
-            <td th:text="${calc.input.workingConditionsFactor}">Working conditions factor</td>
-            <td th:text="${calc.input.reliabilityFactorForResponsibility}">Reliability factor for responsibility</td>
-            <td th:text="#{'axialForceCalc.' + ${calc.input.steel}}">Steel</td>
-            <td th:text="${calc.input.normalForce}">Normal force</td>
-            <td th:text="${calc.input.ownWeightIncluded}">Normal force</td>
-            <td th:text="${calc.result.axialComressionRes}">Section usage</td>
-            <td th:with="dateFormat=#{myCalculations.dateFormat}" th:text="${#dates.format(calc.creationDateTime, dateFormat)}">Date</td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col" th:text="'l, '+#{axialForceCalc.form.units.m}">Length</th>
+                <th scope="col" th:text="#{axialForceCalc.form.sectionType.name}">Section</th>
+                <th scope="col">&#956;</th>
+                <th scope="col">&#947;<sub>c</sub></th>
+                <th scope="col">&#947;<sub>n</sub></th>
+                <th scope="col" th:text="#{axialForceCalc.form.steelGrade.name}">Steel</th>
+                <th scope="col" th:text="'N, ' + #{axialForceCalc.form.units.t}">Normal force</th>
+                <th scope="col" th:text="#{myCalculations.ownWeightIncluded}">Own weight included</th>
+                <th scope="col" th:text="#{myCalculations.sectionUsageY}">Section usage along Y axis</th>
+                <th scope="col" th:text="#{myCalculations.sectionUsageZ}">Section usage along Z axis</th>
+                <th scope="col" th:text="#{myCalculations.date}">Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="calc : ${calculations}">
+                <td th:text="${calc.input.length}">Length</td>
+                <td th:text="#{'axialForceCalc.form.sectionType.' + ${calc.input.sectionType}} + ', ' + (${calc.input.sectionType} == 'WELDED_I_BEAM' ?
+                #{myCalculations.flange} + ': ' + ${calc.input.flangeWidth} + 'x' + ${calc.input.flangeThickness} + ', ' +
+                #{myCalculations.web} + ': ' + ${calc.input.webDepth} + 'x' + ${calc.input.webThickness} :
+                #{'axialForceCalc.form.standard.' + ${calc.input.sectionStandard}} + ' ,# ' + ${calc.input.sectionNumber})">Section</td>
+                <td th:text="${calc.input.getEffectiveLengthFactorY}">Estimated length</td>
+                <td th:text="${calc.input.workingConditionsFactor}">Working conditions factor</td>
+                <td th:text="${calc.input.reliabilityFactorForResponsibility}">Reliability factor for responsibility</td>
+                <td th:text="#{'axialForceCalc.form.steelGrade.' + ${calc.input.steel}}">Steel</td>
+                <td th:text="${calc.input.normalForce}">Normal force</td>
+                <td th:text="${calc.input.ownWeightIncluded}">Normal force</td>
+                <td th:text="${calc.result.axialComressionYRes}">Section usage along Y axis</td>
+                <td th:text="${calc.result.axialComressionZRes}">Section usage along Z axis</td>
+                <td th:with="dateFormat=#{myCalculations.dateFormat}" th:text="${#dates.format(calc.creationDateTime, dateFormat)}">Date</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </main>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>

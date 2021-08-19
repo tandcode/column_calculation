@@ -4,8 +4,9 @@ import org.springframework.data.repository.CrudRepository;
 import ua.com.dbncalc.steel.models.sections.ShapedSection;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SectionRepository  extends CrudRepository<ShapedSection, Integer> {
-    List<ShapedSection> findByStandardAndProfileNumber(String standard, String profileNumber);
+    Optional<ShapedSection> findByStandardAndProfileNumber(String standard, String profileNumber);
     List<ShapedSection> findAll();
 }

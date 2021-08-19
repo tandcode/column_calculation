@@ -22,9 +22,6 @@ public class UProfileSection extends ShapedSection {
     //inside radius (r1) in mm
     private Double insideRadius;
 
-    //outside radius (r2) in mm
-    private Double outsideRadius;
-
     //section first moment about Y axis (Sy) in sm^3
     private Double firstMomentAboutYAxis;
 

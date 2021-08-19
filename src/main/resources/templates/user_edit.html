@@ -13,23 +13,22 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 <div class="user-form text-center">
-        <form th:action="@{/user}" th:object="${user}" method="post">
+        <form th:action="@{/user}" th:object="${userEditDTO}" method="post">
             <h1 class="h3 mb-3 fw-normal" th:text="#{user-edit.editor}"></h1>
-            <input type="hidden" name="userId" th:value="*{id}">
+            <input type="hidden" th:field="*{id}">
             <label for="inputUsername" class="visually-hidden">Username</label>
-            <input type="text" name="username" th:value="*{username}"
+            <input type="text" th:field="*{username}"
                    id="inputUsername" class="form-control" th:placeholder="#{login.username}" required>
             <label for="inputEmail" class="visually-hidden">Username</label>
-            <input type="email" name="email" th:value="*{email}"
+            <input type="email" th:field="*{email}"
                    id="inputEmail" class="form-control" th:placeholder="#{login.email}" required>
-
             <div >
 <!--                th:if="${!#sets.contains(user.roles, T(ua.com.dbncalc.steel.models.Role).ADMIN)}"-->
-                <input id="manager" class="btn-check" type ="checkbox" name="manager"
-                              th:checked="${#sets.contains(user.roles, T(ua.com.dbncalc.steel.models.Role).ADMIN)}">
-                <label class="w-100 mb-2 btn btn-outline-warning" for="manager" th:text="#{user-edit.admin}">Admin</label>
+                <input id="admin" name="admin" class="btn-check" type ="checkbox"
+                       th:checked="*{admin}">
+                <label class="w-100 mb-2 btn btn-outline-warning" for="admin" th:text="#{user-edit.admin}">Admin</label>
 
-                <input id="active" class="btn-check" type ="checkbox" name="active"
+                <input id="active" name="active" class="btn-check" type ="checkbox"
                        th:checked="*{active}">
                 <label class="w-100 mb-2 btn btn-outline-success" for="active" th:text="#{user-edit.is-active}">Active</label>
             </div>

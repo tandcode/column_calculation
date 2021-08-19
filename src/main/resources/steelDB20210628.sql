@@ -176,16 +176,6 @@ CREATE TABLE `ibeam_rounded_flange_section` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ibeam_rounded_flange_section`
---
-
-LOCK TABLES `ibeam_rounded_flange_section` WRITE;
-/*!40000 ALTER TABLE `ibeam_rounded_flange_section` DISABLE KEYS */;
-INSERT INTO `ibeam_rounded_flange_section` VALUES (2.5,1),(3,2),(3,3),(3.5,4),(3.5,5),(4,6),(4,7),(4,8),(4.5,9),(5,10),(5,11),(6,12),(6,13),(7,14),(7,15),(7,16),(8,17),(3.8,18),(3.5,19),(4.5,20),(4.5,21),(4.8,22),(4,23),(5.3,24),(5.3,25),(6,26),(6,27),(6,28),(7,29);
-/*!40000 ALTER TABLE `ibeam_rounded_flange_section` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `ibeam_section`
 --
 

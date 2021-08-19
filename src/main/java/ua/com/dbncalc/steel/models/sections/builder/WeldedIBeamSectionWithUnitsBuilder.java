@@ -134,9 +134,9 @@ public final class WeldedIBeamSectionWithUnitsBuilder {
         weldedIBeamSectionWithUnits.setRadiusOfGyrationZAxis(radiusOfGyrationZAxis);
         weldedIBeamSectionWithUnits.setLegOfWeld(legOfWeld);
         weldedIBeamSectionWithUnits.setFlangeWidth(flangeWidth);
-        weldedIBeamSectionWithUnits.setFlangeThickness(flangeThickness);
+        weldedIBeamSectionWithUnits.setFlangeThick(flangeThickness);
         weldedIBeamSectionWithUnits.setWebDepth(webDepth);
-        weldedIBeamSectionWithUnits.setWebThickness(webThickness);
+        weldedIBeamSectionWithUnits.setWebThick(webThickness);
         return weldedIBeamSectionWithUnits;
     }
 }

@@ -28,16 +28,22 @@ public class CCWBInput {
     private Double flangeThickness;
     private Double webDepth;
     private Double webThickness;
+    private Double legOfWeld;
 
     //element length in m
     @NotNull(message = "errors.null.length")
     @DecimalMin(value = "0.0", inclusive = false, message = "errors.min.length")
     private Double length;
 
-    //estimated length factor
-    @NotNull(message = "errors.null.estimatedLengthFactor")
-    @DecimalMin(value = "0.0", inclusive = false, message = "errors.min.estimatedLengthFactor")
-    private Double estimatedLengthFactor;
+    //effective length factor Y axes
+    @NotNull(message = "errors.null.effectiveLengthFactorY")
+    @DecimalMin(value = "0.0", inclusive = false, message = "errors.min.effectiveLengthFactorY")
+    private Double effectiveLengthFactorY;
+
+    //effective length factor Z axes
+    @NotNull(message = "errors.null.effectiveLengthFactorZ")
+    @DecimalMin(value = "0.0", inclusive = false, message = "errors.min.effectiveLengthFactorZ")
+    private Double effectiveLengthFactorZ;
 
     //working conditions factor (gammaC)
     @NotNull(message = "errors.null.workingConditionsFactor")
